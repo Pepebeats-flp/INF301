@@ -77,7 +77,7 @@
             </table>
         </div>
         <div style="text-align: right;">
-            <a href="index.html" class="btn btn-dark">Volver</a>
+            <a href="index.php" class="btn btn-dark">Volver</a>
             <button class="btn btn-dark">Enviar Solicitud</button>
         </div>
     </div>

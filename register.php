@@ -19,7 +19,7 @@
                         <h3 class="text-center">Registro</h3>
                     </div>
                     <div class="card-body ">
-                        <form action="index.html">
+                        <form action="index.php">
                             <div class="mb-3 mt-3">
                                 <label for="rol" class="form-label">Rol</label>
                                 <select class="form-select" aria-label="Default select example" id="rol" name="rol" required>
@@ -50,7 +50,7 @@
                         </form>
                     </div>
                     <div class="card-footer">
-                        <a href="login.html">¿Ya tienes una cuenta? Inicia sesión</a>
+                        <a href="login.php">¿Ya tienes una cuenta? Inicia sesión</a>
                     </div>  
                 </div>
             </div>
