@@ -1,51 +1,40 @@
 <?php
-session_start(); // Inicia la sesión (si aún no se ha iniciado)
+// Incluir la conexión a la base de datos
+require_once 'conexion.php';
 
+session_start();
+
+// Verificar si el usuario ya está autenticado
+if (isset($_SESSION['usuario'])) {
+    header("Location: index.php"); // Redirigir a la página de inicio
+    exit();
+}
+
+// Verificar si se envió el formulario
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $usuario = $_POST["usuario"];
-    $contrasena = $_POST["contrasena"];
+    $correo = $_POST["correo"];
+    $clave = $_POST["clave"];
 
-    $usuario = htmlentities($usuario); // Evitar inyección de HTML
-    $contrasena = htmlentities($contrasena); // Evitar inyección de HTML
+    // Consultar la base de datos para verificar las credenciales
+    $consulta = "SELECT * FROM cuentas_usuario WHERE correo = :correo AND clave = :clave";
+    $stmt = oci_parse($conn, $consulta);
 
-    // Verificar la conexión a la base de datos (usando tu código existente)
-    $usuario_bd = 'admin';  // Reemplaza con tus credenciales
-    $contrasena_bd = 'push1234';  // Reemplaza con tus credenciales
-    $host_bd = 'database-1.cgklsm5ek2li.us-east-2.rds.amazonaws.com';  // Reemplaza con la dirección de tu servidor Oracle
-    $puerto_bd = '1521';  // Reemplaza con el puerto de tu servidor Oracle
-    $sid_bd = 'ORCL';  // Reemplaza con el SID de tu base de datos Oracle
+    oci_bind_by_name($stmt, ':correo', $correo);
+    oci_bind_by_name($stmt, ':clave', $clave);
 
-    $tns = "(DESCRIPTION =
-        (ADDRESS = (PROTOCOL = TCP)(HOST = " . $host_bd . ")(PORT = " . $puerto_bd . "))
-        (CONNECT_DATA =
-        (SID = " . $sid_bd . ")
-        )
-    )";
-
-    $conn = oci_connect($usuario_bd, $contrasena_bd, $tns);
-
-    if (!$conn) {
-        $error = oci_error();
-        die("Conexión fallida: " . $error['message']);
-    }
-
-    // Consulta preparada para verificar las credenciales del usuario
-    $sql = "SELECT nombre_usuario FROM usuarios WHERE nombre_usuario = :usuario AND contrasena = :contrasena";
-    $stmt = oci_parse($conn, $sql);
-    oci_bind_by_name($stmt, ":usuario", $usuario);
-    oci_bind_by_name($stmt, ":contrasena", $contrasena);
     oci_execute($stmt);
 
-    // Verificar si se encontró un usuario
     if ($row = oci_fetch_assoc($stmt)) {
-        $_SESSION["usuario"] = $row["nombre_usuario"]; // Almacenar el nombre de usuario en la sesión
-        header("Location: index.php"); // Redirigir al usuario a la página de inicio después del inicio de sesión
+        // Usuario autenticado, iniciar sesión
+        $_SESSION['usuario'] = $correo;
+        header("Location: index.php"); // Redirigir a la página de inicio
         exit();
     } else {
-        $mensaje_error = "Credenciales incorrectas. Por favor, inténtalo de nuevo.";
+        $mensaje_error = "Credenciales incorrectas";
     }
 
     // Cerrar la conexión a la base de datos
+    oci_free_statement($stmt);
     oci_close($conn);
 }
 ?>
@@ -67,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="col-12 col-md-6 col-lg-4">
                 <div class="card mt-5">
                     <div class="card-header">
-                        <h3 class="text-center">pichi</h3>
+                        <h3 class="text-center">Inicio de sesión</h3>
                     </div>
                     <div class="card-body ">
                         <?php if (isset($mensaje_error)) : ?>
@@ -75,15 +64,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <?php endif; ?>
                         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
                             <div class="mb-3 mt-3">
-                                <label for="usuario" class="form-label">Usuario</label>
-                                <input type="text" class="form-control" id="usuario" name="usuario" required>
+                                <label for="correo" class="form-label">Correo electrónico</label>
+                                <input type="email" class="form-control" id="correo" name="correo" required>
                             </div>
                             <div class="mb-3 mt-3">
-                                <label for="contrasena" class="form-label">Contraseña</label>
-                                <input type="password" class="form-control" id="contrasena" name="contrasena" required>
+                                <label for="clave" class="form-label">Contraseña</label>
+                                <input type="password" class="form-control" id="clave" name="clave" required>
                             </div>
                             <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-dark"> sesión</button>
+                                <button type="submit" class="btn btn-dark">Iniciar sesión</button>
                             </div>
                         </form>
                     </div>
@@ -97,5 +86,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </body>
 
 </html>
-
 
