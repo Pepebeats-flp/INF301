@@ -19,7 +19,7 @@
                         <h3 class="text-center">Registro</h3>
                     </div>
                     <div class="card-body ">
-                        <form action="index.php">
+                        <form action="procesar_registro.php" method=post>
                             <div class="mb-3 mt-3">
                                 <label for="rol" class="form-label">Rol</label>
                                 <select class="form-select" aria-label="Default select example" id="rol" name="rol" required>
@@ -36,8 +36,20 @@
                                 <input type="text" class="form-control" id="lastname" name="lastname" required>
                             </div>
                             <div class="mb-3 mt-3">
+                                <label for="rut" class="form-label">RUT</label>
+                                <input type="text" class="form-control" id="rut" name="rut" required>
+                            </div>
+                            <div class="mb-3 mt-3">
                                 <label for="email" class="form-label">Correo electrónico</label>
                                 <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                            <div class="mb-3 mt-3">
+                                <label for="telefono" class="form-label">Telefono</label>
+                                <input type="text" class="form-control" id="telefono" name="telefono" required>
+                            </div>
+                            <div class="mb-3 mt-3">
+                                <label for="direccion" class="form-label">Direccion</label>
+                                <input type="text" class="form-control" id="direccion" name="direccion" required>
                             </div>
                             <div class="mb-3 mt-3">
                                 <label for="password" class="form-label">Contraseña</label>
@@ -45,7 +57,7 @@
                             </div>
 
                             <div class="d-grid gap-2">
-                                <button class="btn btn-dark" href="index.html">Registrarse</button>
+                                <button class="btn btn-dark">Registrarse</button>
                             </div>
                         </form>
                     </div>
