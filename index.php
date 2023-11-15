@@ -47,15 +47,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
             </span>
         </div> 
     </nav>
+    
     <div class="container shadow-sm rounded p-2 mt-2">
         <h2>Búsqueda de documentos:</h2>
-        <form class="p-3">
+        <form class="p-3" id="filtroForm">
             <div class="form-group row mb-3">
                 <label for="document_type" class="col-sm-3 col-form-label">Tipo de documento: </label>
                 <div class="col-sm-9">
                     <select id="document_type" class="form-select">
-                        <option>Libros Técnicos</option>
-                        <option>Libros de arte</option>
+                        <option>Revista</option>
+                        <option>Articulo</option>
+                        <option>Libro</option>
                     </select>
                 </div>
             </div>
@@ -63,8 +65,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
                 <label for="category" class="col-sm-3 col-form-label">Categoría: </label>
                 <div class="col-sm-9">
                     <select id="category" class="form-select">
-                        <option>Ingeniería Informatica</option>
-                        <option>Ingeniería Comercial</option>
+                        <option>Tecnologia</option>
+                        <option>Ciencia</option>
+                        <option>Arte</option>
                     </select>
                 </div>
             </div>
@@ -88,12 +91,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
             </div>
             <div style="text-align: right;">
                 <button class="btn btn-outline-dark">Volver</button>
-                <button class="btn btn-dark">Aplicar filtro</button>
+                <button class="btn btn-dark" id="aplicarFiltroBtn">Aplicar filtro</button>
             </div>
         </form>
     </div>
+
+    <?php
+    // Realizar la consulta a la base de datos
+    $sql = "SELECT * FROM Documento";
+    $resultado = oci_parse($conn, $sql);
+    oci_execute($resultado);
+    ?>
+
     <div class="container shadow-sm rounded p-2 mt-2">
-        <h2>Documentos encontrados: </h2>
+        <h2>Documentos encontrados:</h2>
         <div class="p-1 mb-3" style="overflow: scroll; max-height:300px;">
             <table class="table table-striped">
                 <thead>
@@ -109,66 +120,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Ingeniería de Software</td>
-                        <td>El Ingeniero</td>
-                        <td>4° Edición</td>
-                        <td>2005</td>
-                        <td>Libro Técnico</td>
-                        <td>Ingeniería Informatica</td>
-                        <td>3</td>
-                        <td>
-                            <input type="checkbox">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Ingeniería de Software</td>
-                        <td>El Ingeniero</td>
-                        <td>4° Edición</td>
-                        <td>2005</td>
-                        <td>Libro Técnico</td>
-                        <td>Ingeniería Informatica</td>
-                        <td>3</td>
-                        <td>
-                            <input type="checkbox">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Ingeniería de Software</td>
-                        <td>El Ingeniero</td>
-                        <td>4° Edición</td>
-                        <td>2005</td>
-                        <td>Libro Técnico</td>
-                        <td>Ingeniería Informatica</td>
-                        <td>3</td>
-                        <td>
-                            <input type="checkbox">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Ingeniería de Software</td>
-                        <td>El Ingeniero</td>
-                        <td>4° Edición</td>
-                        <td>2005</td>
-                        <td>Libro Técnico</td>
-                        <td>Ingeniería Informatica</td>
-                        <td>3</td>
-                        <td>
-                            <input type="checkbox">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Ingeniería de Software</td>
-                        <td>El Ingeniero</td>
-                        <td>4° Edición</td>
-                        <td>2005</td>
-                        <td>Libro Técnico</td>
-                        <td>Ingeniería Informatica</td>
-                        <td>3</td>
-                        <td>
-                            <input type="checkbox">
-                        </td>
-                    </tr>
+                    <?php
+                    // Iterar sobre los resultados y mostrar cada fila
+                    while ($fila = oci_fetch_assoc($resultado)) {
+                        echo "<tr>";
+                        echo "<td>{$fila['TITULO']}</td>";
+                        echo "<td>{$fila['AUTOR']}</td>";
+                        echo "<td>{$fila['EDICION']}</td>";
+                        echo "<td>{$fila['ANIO']}</td>";
+                        echo "<td>{$fila['TIPO']}</td>";
+                        echo "<td>{$fila['CATEGORIA']}</td>";
+                        echo "<td>3</td>";
+                        echo "<td><input type='checkbox'></td>";
+                        echo "</tr>";
+                    }
+                    ?>
                 </tbody>
             </table>
         </div>
@@ -176,10 +142,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
             <button class="btn btn-dark">Agregar a Solicitud</button>
         </div>
     </div>
-
-    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-        <button type="submit" class="btn btn-danger" name="cerrar_sesion">Cerrar Sesión</button>
-    </form>
-
 </body>
 </html>
