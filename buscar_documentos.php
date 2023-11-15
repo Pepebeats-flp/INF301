@@ -3,6 +3,15 @@
 session_start();
 require_once 'conexion.php';
 
+// Iniciar la sesión
+session_start();
+
+// Verificar si la variable de sesión "carrito" no está definida o es null
+if (!isset($_SESSION["carrito"]) || $_SESSION["carrito"] === null) {
+    // Inicializar la variable de sesión "carrito" como un array vacío
+    $_SESSION["carrito"] = array();
+}
+
 $document_type = isset($_GET['document_type']) ? $_GET['document_type'] : null;
 $category = isset($_GET['category']) ? $_GET['category'] : null;
 $title = isset($_GET['title']) ? $_GET['title'] : null;
@@ -35,6 +44,36 @@ if (!empty($topic)) {
 // Ejecutar la consulta
 $resultado = oci_parse($conn, $sql);
 oci_execute($resultado);
+
+// Obtener el identificador del documento que se está agregando al carrito
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["agregar_al_carrito"])) {
+    $documento_id = $_POST["agregar_al_carrito"];
+    echo "Documento ID: " . $documento_id . "<br>";
+
+    // Realizar una consulta para obtener los detalles del documento
+    $sql = "SELECT * FROM Documento WHERE IDENTIFICADOR = :documento_id";
+    $stmt = oci_parse($conn, $sql);
+    oci_bind_by_name($stmt, ":documento_id", $documento_id);
+
+    // Verifica que la consulta se prepare correctamente
+    if (!$stmt) {
+        $e = oci_error($conn); // Para errores de OCI, no usamos oci_error()!
+        trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+    }
+
+    oci_execute($stmt);
+
+    // Obtener los detalles del documento
+    $documento = oci_fetch_assoc($stmt);
+
+    // Añadir el documento al carrito en la sesión
+    $_SESSION['carrito'][] = $documento;
+
+    // Redirigir a la página del carrito
+    header("Location: carro.php");
+    exit();
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -89,42 +128,45 @@ oci_execute($resultado);
 
     <div class="container shadow-sm rounded p-2 mt-2">
         <h2>Documentos encontrados:</h2>
-        <div class="p-1 mb-3" style="overflow: scroll; max-height:300px;">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th scope="col">Título</th>
-                        <th scope="col">Autor</th>
-                        <th scope="col">Edición</th>
-                        <th scope="col">Año</th>
-                        <th scope="col">Tipo</th>
-                        <th scope="col">Categoría</th>
-                        <th scope="col">#</th>
-                        <th scope="col">Agregar</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    // Iterar sobre los resultados y mostrar cada fila
-                    while ($fila = oci_fetch_assoc($resultado)) {
-                        echo "<tr>";
-                        echo "<td>{$fila['TITULO']}</td>";
-                        echo "<td>{$fila['AUTOR']}</td>";
-                        echo "<td>{$fila['EDICION']}</td>";
-                        echo "<td>{$fila['ANIO']}</td>";
-                        echo "<td>{$fila['TIPO']}</td>";
-                        echo "<td>{$fila['CATEGORIA']}</td>";
-                        echo "<td>3</td>";
-                        echo "<td><input type='checkbox'></td>";
-                        echo "</tr>";
-                    }
-                    ?>
-                </tbody>
-            </table>
-        </div>
+        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+            <div class="p-1 mb-3" style="overflow: scroll; max-height:300px;">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Título</th>
+                            <th scope="col">Autor</th>
+                            <th scope="col">Edición</th>
+                            <th scope="col">Año</th>
+                            <th scope="col">Tipo</th>
+                            <th scope="col">Categoría</th>
+                            <th scope="col">#</th>
+                            <th scope="col">Agregar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        // Iterar sobre los resultados y mostrar cada fila
+                        while ($fila = oci_fetch_assoc($resultado)) {
+                            echo "<tr>";
+                            echo "<td>{$fila['TITULO']}</td>";
+                            echo "<td>{$fila['AUTOR']}</td>";
+                            echo "<td>{$fila['EDICION']}</td>";
+                            echo "<td>{$fila['ANIO']}</td>";
+                            echo "<td>{$fila['TIPO']}</td>";
+                            echo "<td>{$fila['CATEGORIA']}</td>";
+                            echo "<td>{$fila['IDENTIFICADOR']}</td>"; // Agregar el ID del documento
+                            echo "<td><input type='checkbox' name='documentos_seleccionados[]' value='{$fila['IDENTIFICADOR']}'></td>";
+                            // Mover el botón dentro del bucle para tener acceso a cada IDENTIFICADOR
+                            echo "<td><button type='submit' class='btn btn-dark' name='agregar_al_carrito' value='{$fila['IDENTIFICADOR']}'>Agregar a Carrito</button></td>";
+                            echo "</tr>";
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+        </form>
         <div style="text-align: right;">
             <a href="index.php" class="btn btn-outline-dark">Volver</a>
-            <button class="btn btn-dark">Agregar a Solicitud</button>
         </div>
     </div>
 </body>
