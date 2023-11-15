@@ -1,3 +1,27 @@
+<?php
+session_start();
+
+// Incluir la conexión a la base de datos
+require_once 'conexion.php';
+
+if (isset($_SESSION["usuario"])) {
+    $correo = $_SESSION["usuario"];
+} else {
+    // La sesión no está iniciada, redirigir a la página de inicio de sesión
+    header("Location: login.php");
+    // Terminar el script para evitar que se ejecute más código
+    exit();
+}
+
+// Cerrar sesión
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
+    session_destroy();
+    header("Location: index.php"); // Redirigir al inicio de sesión después de cerrar la sesión
+    exit();
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
