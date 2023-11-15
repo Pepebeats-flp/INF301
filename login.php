@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($row = oci_fetch_assoc($stmt)) {
         // Usuario autenticado, iniciar sesión
-        $_SESSION['usuario'] = $correo;
+        $_SESSION['correo'] = $correo;
         header("Location: index.php"); // Redirigir a la página de inicio
         exit();
     } else {
@@ -56,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="col-12 col-md-6 col-lg-4">
                 <div class="card mt-5">
                     <div class="card-header">
-                        <h3 class="text-center">Inicio de sesión</h3>
+                        <h3 class="text-center">Ingreso usuario</h3>
                     </div>
                     <div class="card-body ">
                         <?php if (isset($mensaje_error)) : ?>
@@ -78,7 +78,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
 
                     <div class="card-footer">
-                        <a href=".php">Ingreso personal biblioteca</a>
+                        <a href="login_personal.php">Ingreso personal biblioteca</a>
                     </div>
                     
                     <div class="card-footer">
