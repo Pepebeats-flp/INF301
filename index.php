@@ -50,7 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
     
     <div class="container shadow-sm rounded p-2 mt-2">
         <h2>Búsqueda de documentos:</h2>
-        <form class="p-3" id="filtroForm">
+        <form action="buscar_documentos.php" class="p-3" id="filtroForm">
             <div class="form-group row mb-3">
                 <label for="document_type" class="col-sm-3 col-form-label">Tipo de documento: </label>
                 <div class="col-sm-9">
