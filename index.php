@@ -37,6 +37,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
             <span style="font-size: 20px;">
                 <i class="fa-solid fa-user"></i> <?php echo $correo; ?>
             </span>
+            <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                <button type="submit" class="btn btn-danger" name="cerrar_sesion">Cerrar Sesión</button>
+            </form>
             <span style="cursor: pointer;font-size: 20px; text-align: right;">
                 <a href="carro.php" style="text-decoration: none; color: black;">
                     <i class="fa-solid fa-cart-shopping"></i>

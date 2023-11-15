@@ -76,6 +76,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             </div>
                         </form>
                     </div>
+
+                    <div class="card-footer">
+                        <a href=".php">Ingreso personal biblioteca</a>
+                    </div>
+                    
                     <div class="card-footer">
                         <a href="register.php">¿No tienes una cuenta? Regístrate</a>
                     </div>
