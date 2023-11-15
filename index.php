@@ -4,8 +4,8 @@ session_start();
 // Incluir la conexión a la base de datos
 require_once 'conexion.php';
 
-if (isset($_SESSION["usuario"])) {
-    $correo = $_SESSION["usuario"];
+if (isset($_SESSION["correo"])) {
+    $correo = $_SESSION["correo"];
 }
 
 // Cerrar sesión
