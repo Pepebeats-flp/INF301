@@ -1,42 +1,93 @@
 <?php
-// buscar_documentos.php
-
 // Incluir la conexión a la base de datos
 require_once 'conexion.php';
 
-// Obtener los valores del formulario
-$documentType = $_POST['document_type'];
-$category = $_POST['category'];
-$title = $_POST['title'];
-$author = $_POST['author'];
-$topic = $_POST['topic'];
+// Recoger los parámetros del formulario
+$document_type = $_GET['document_type'];
+$category = $_GET['category'];
+$title = $_GET['title'];
+$author = $_GET['author'];
+$topic = $_GET['topic'];
 
-// Construir la consulta SQL basada en los valores del formulario
-$sql = "SELECT * FROM Documento WHERE Tipo = :documentType AND Categoria = :category AND Titulo LIKE :title AND Autor LIKE :author AND Tema LIKE :topic";
+// Construir la consulta SQL con filtros
+$sql = "SELECT * FROM Documento WHERE 1=1";
 
-// Preparar la consulta
-$statement = oci_parse($conn, $sql);
-
-// Vincular los parámetros
-oci_bind_by_name($statement, ':documentType', $documentType);
-oci_bind_by_name($statement, ':category', $category);
-oci_bind_by_name($statement, ':title', '%' . $title . '%');
-oci_bind_by_name($statement, ':author', '%' . $author . '%');
-oci_bind_by_name($statement, ':topic', '%' . $topic . '%');
-
-// Ejecutar la consulta
-oci_execute($statement);
-
-// Obtener los resultados
-$resultados = [];
-while ($fila = oci_fetch_assoc($statement)) {
-    $resultados[] = $fila;
+if (!empty($document_type)) {
+    $sql .= " AND TIPO = '$document_type'";
 }
 
-// Liberar recursos
-oci_free_statement($statement);
-oci_close($conn);
+if (!empty($category)) {
+    $sql .= " AND CATEGORIA = '$category'";
+}
 
-// Devolver los resultados en formato JSON
-echo json_encode($resultados);
+if (!empty($title)) {
+    $sql .= " AND TITULO LIKE '%$title%'";
+}
+
+if (!empty($author)) {
+    $sql .= " AND AUTOR LIKE '%$author%'";
+}
+
+if (!empty($topic)) {
+    $sql .= " AND TEMA LIKE '%$topic%'";
+}
+
+// Ejecutar la consulta
+$resultado = oci_parse($conn, $sql);
+oci_execute($resultado);
 ?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados de búsqueda</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link rel="stylesheet" href="catalogo.css">
+    <script src="https://kit.fontawesome.com/a4490af95b.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <!-- ... (código del encabezado) ... -->
+
+    <div class="container shadow-sm rounded p-2 mt-2">
+        <h2>Documentos encontrados:</h2>
+        <div class="p-1 mb-3" style="overflow: scroll; max-height:300px;">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Título</th>
+                        <th scope="col">Autor</th>
+                        <th scope="col">Edición</th>
+                        <th scope="col">Año</th>
+                        <th scope="col">Tipo</th>
+                        <th scope="col">Categoría</th>
+                        <th scope="col">#</th>
+                        <th scope="col">Agregar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    // Iterar sobre los resultados y mostrar cada fila
+                    while ($fila = oci_fetch_assoc($resultado)) {
+                        echo "<tr>";
+                        echo "<td>{$fila['TITULO']}</td>";
+                        echo "<td>{$fila['AUTOR']}</td>";
+                        echo "<td>{$fila['EDICION']}</td>";
+                        echo "<td>{$fila['ANIO']}</td>";
+                        echo "<td>{$fila['TIPO']}</td>";
+                        echo "<td>{$fila['CATEGORIA']}</td>";
+                        echo "<td>3</td>";
+                        echo "<td><input type='checkbox'></td>";
+                        echo "</tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+        <div style="text-align: right;">
+            <button class="btn btn-dark">Agregar a Solicitud</button>
+        </div>
+    </div>
+</body>
+</html>
