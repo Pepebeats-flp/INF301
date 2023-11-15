@@ -1,5 +1,6 @@
 <?php
 // Incluir la conexión a la base de datos
+session_start();
 require_once 'conexion.php';
 
 $document_type = isset($_GET['document_type']) ? $_GET['document_type'] : null;
@@ -55,8 +56,8 @@ oci_execute($resultado);
                 <?php 
                     
                     // Mostrar $correo solo si está definido
-                    if (isset($correo)) {
-                        echo $correo;
+                    if (isset($_SESSION["correo"])) {
+                        echo $_SESSION["correo"];
                 ?>
                         
                         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
