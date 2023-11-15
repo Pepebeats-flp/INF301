@@ -2,12 +2,11 @@
 // Incluir la conexión a la base de datos
 require_once 'conexion.php';
 
-// Recoger los parámetros del formulario
-$document_type = $_GET['document_type'];
-$category = $_GET['category'];
-$title = $_GET['title'];
-$author = $_GET['author'];
-$topic = $_GET['topic'];
+$document_type = isset($_GET['document_type']) ? $_GET['document_type'] : null;
+$category = isset($_GET['category']) ? $_GET['category'] : null;
+$title = isset($_GET['title']) ? $_GET['title'] : null;
+$author = isset($_GET['author']) ? $_GET['author'] : null;
+$topic = isset($_GET['topic']) ? $_GET['topic'] : null;
 
 // Construir la consulta SQL con filtros
 $sql = "SELECT * FROM Documento WHERE 1=1";
@@ -48,6 +47,43 @@ oci_execute($resultado);
     <script src="https://kit.fontawesome.com/a4490af95b.js" crossorigin="anonymous"></script>
 </head>
 <body>
+
+    <nav class="navbar navbar-light bg-light shadow-sm">
+        <div class="container">
+            <span style="font-size: 20px;">
+                <i class="fa-solid fa-user"></i> 
+                <?php 
+                    
+                    // Mostrar $correo solo si está definido
+                    if (isset($correo)) {
+                        echo $correo;
+                ?>
+                        
+                        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                            <button type="submit" class="btn btn-danger" name="cerrar_sesion">Cerrar Sesión</button>
+                        </form>
+
+                <?php 
+
+                    } else {
+                        // Mostrar el botón "Iniciar Sesión" si el usuario no está autenticado
+                        echo '<a href="login.php" class="btn btn-outline-dark">Iniciar Sesión</a>';
+                        echo '<a href="register.php" class="btn btn-outline-dark">Registrarse</a>';
+                        
+                    }
+                
+                ?>
+            </span>
+            <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                
+            </form>
+            <span style="cursor: pointer;font-size: 20px; text-align: right;">
+                <a href="carro.php" style="text-decoration: none; color: black;">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                </a>
+            </span>
+        </div> 
+    </nav>
     <!-- ... (código del encabezado) ... -->
 
     <div class="container shadow-sm rounded p-2 mt-2">
@@ -86,6 +122,7 @@ oci_execute($resultado);
             </table>
         </div>
         <div style="text-align: right;">
+            <a href="index.php" class="btn btn-outline-dark">Volver</a>
             <button class="btn btn-dark">Agregar a Solicitud</button>
         </div>
     </div>
