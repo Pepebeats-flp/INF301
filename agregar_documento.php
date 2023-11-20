@@ -103,6 +103,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
             <div class="form-group mt-2">
                 <label for="tipo">Tipo:</label>
                 <select class="form-control" name="tipo">
+                    <option value="" disabled selected>Elegir tipo</option>
                     <option value="Libro">Libro</option>
                     <option value="Revista">Revista</option>
                     <option value="Articulo">Articulo</option>
@@ -114,6 +115,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
             <div class="form-group mt-2">
                 <label for="categoria">Categoría:</label>
                 <select class="form-control" name="categoria">
+                    <option value="" disabled selected>Elegir categoria</option>
                     <option value="Ciencia">Ciencia</option>
                     <option value="Tecnologia">Tecnología</option>
                     <option value="Arte">Arte</option>
@@ -129,7 +131,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
 
             <br>
 
-            <button type="submit" class="btn btn-dark">Agregar Documento</button>
+            
+
+            <div style="text-align: left;">
+                <button type="submit" class="btn btn-dark">Agregar Documento</button>
+                <a href="indexbiblio.php" class="btn btn-outline-dark">Volver</a>
+            </div>
         </form>
     </div>
 </body>
