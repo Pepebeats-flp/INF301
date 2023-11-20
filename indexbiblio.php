@@ -14,6 +14,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
     header("Location: index.php"); // Redirigir al inicio de sesión después de cerrar la sesión
     exit();
 }
+
+// Verificar si se ha creado un documento
+if (isset($_GET["documento_creado"]) && $_GET["documento_creado"] == 1) {
+    $alert_message = "Documento creado con éxito";
+    $alert_class = "alert-success"; // Puedes cambiar esto según el tipo de alerta que desees
+}
 ?>
 
 <!DOCTYPE html>
@@ -27,15 +33,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
     <script src="https://kit.fontawesome.com/a4490af95b.js" crossorigin="anonymous"></script>
 </head>
 <body>
+
+
 <nav class="navbar navbar-light bg-light shadow-sm">
     <div class="container">
 
-        <span style="font-size: 20px;" class="d-flex align-items-center">
+        <span style="font-size: 20px;">
             <i class="fa-solid fa-user"></i> 
 
             <?php 
                 if (isset($usuario)) {
-                    echo $usuario;
+                    echo "Bibliotecario(a): ", $usuario;
             ?>
                     
                     <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
@@ -54,25 +62,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
             <!-- Otro formulario u otros elementos según sea necesario -->
         </form>
 
+        <ul class="nav">
+        <li class="nav-item">
+            <a href="#" class="btn btn-dark me-4" aria-current="page">Administrar Catalogo</a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="btn btn-dark me-4">Revisar solicitudes</a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="btn btn-dark me-4">Registrar prestamo</a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="btn btn-dark">Devoluciones</a>
+        </li>
+        </ul>
+
     </div> 
 </nav>
 
 <br>
-
-<ul class="nav justify-content-center">
-  <li class="nav-item">
-    <a href="#" class="btn btn-dark me-4" aria-current="page">Administrar Catalogo</a>
-  </li>
-  <li class="nav-item">
-    <a href="#" class="btn btn-dark me-4">Revisar solicitudes</a>
-  </li>
-  <li class="nav-item">
-    <a href="#" class="btn btn-dark me-4">Registrar prestamo</a>
-  </li>
-  <li class="nav-item">
-    <a href="#" class="btn btn-dark">Devoluciones</a>
-  </li>
-</ul>
 
     
 
@@ -133,9 +141,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
     ?>
 
     <div class="container shadow-sm rounded p-2 mt-2">
-        <h2>Todos los documentos: </h2>
+        <h2>Consulta/Administracion de documentos: </h2>
 
-        <a href="#" class="btn btn-dark">Agregar documento</a>
+        <a href="agregar_documento.php" class="btn btn-dark">Agregar documento nuevo</a>
 
         <div class="p-1 mb-3" style="overflow: scroll; max-height:300px;">
             <table class="table table-striped">
@@ -145,6 +153,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
                         <th scope="col">Título</th>
                         <th scope="col">Autor</th>
                         <th scope="col">Edición</th>
+                        <th scope="col">Editorial</th>
                         <th scope="col">Año</th>
                         <th scope="col">Tipo</th>
                         <th scope="col">Categoría</th>
@@ -162,18 +171,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
                         echo "<td>{$fila['TITULO']}</td>";
                         echo "<td>{$fila['AUTOR']}</td>";
                         echo "<td>{$fila['EDICION']}</td>";
+                        echo "<td>{$fila['EDITORIAL']}</td>";
                         echo "<td>{$fila['ANIO']}</td>";
                         echo "<td>{$fila['TIPO']}</td>";
                         echo "<td>{$fila['CATEGORIA']}</td>";
-                        echo "<td>3</td>";
+                        echo "<td>{$fila['CANTIDAD']}</td>";
                         echo "<td>
                                 <form method='post' action='modificar_documento.php'>
                                     <input type='hidden' name='id' value='{$fila['IDENTIFICADOR']}'>
-                                    <button type='submit' class='btn btn-danger'>Modificar</button>
+                                    <button type='submit' class='btn btn-dark'>Modificar</button>
                                 </form>
                             </td>";
                         echo "<td>
-                                <form method='post' action='eliminar_documento.php'>
+                                <form method='post' action='eliminar_documento.php' onsubmit='return confirmarEliminar()'> <!-- Agrega onsubmit -->
                                     <input type='hidden' name='id' value='{$fila['IDENTIFICADOR']}'>
                                     <button type='submit' class='btn btn-danger'>Eliminar</button>
                                 </form>
@@ -181,6 +191,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
 
                     }
                     ?>
+
+                    <!-- Agrega este bloque de script al final de tu página o en la sección head -->
+                    <script>
+                        function confirmarEliminar() {
+                            return confirm("¿Estás seguro de que quieres eliminar este documento?");
+                        }
+                    </script>
                 </tbody>
             </table>
         </div>

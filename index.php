@@ -35,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
                     
                     // Mostrar $correo solo si está definido
                     if (isset($correo)) {
-                        echo $correo;
+                        echo "Usuario(a): ", $correo;
                 ?>
                         
                         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
@@ -46,13 +46,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
 
                     } else {
                         // Mostrar el botón "Iniciar Sesión" si el usuario no está autenticado
-                        echo '<a href="login.php" class="btn btn-outline-dark">Iniciar Sesión</a>';
-                        echo '<a href="register.php" class="btn btn-outline-dark">Registrarse</a>';
+                        
+                        echo '<a href="login.php" class="btn btn-outline-dark" style="margin-left: 10px;">Iniciar Sesión</a>';
+                        echo '<a href="register.php" class="btn btn-outline-dark" style="margin-left: 10px;">Registrarse</a>';
+                        
+                        
+                        
                         
                     }
                 
                 ?>
             </span>
+
             <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
                 
             </form>
@@ -130,10 +135,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
                         <th scope="col">Título</th>
                         <th scope="col">Autor</th>
                         <th scope="col">Edición</th>
+                        <th scope="col">Editorial</th>
                         <th scope="col">Año</th>
                         <th scope="col">Tipo</th>
                         <th scope="col">Categoría</th>
-                        <th scope="col">#</th>
+                        <th scope="col">Disponible</th>
                         <th scope="col">Agregar</th>
                     </tr>
                 </thead>
@@ -146,10 +152,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
                         echo "<td>{$fila['TITULO']}</td>";
                         echo "<td>{$fila['AUTOR']}</td>";
                         echo "<td>{$fila['EDICION']}</td>";
+                        echo "<td>{$fila['EDITORIAL']}</td>";
                         echo "<td>{$fila['ANIO']}</td>";
                         echo "<td>{$fila['TIPO']}</td>";
                         echo "<td>{$fila['CATEGORIA']}</td>";
-                        echo "<td>3</td>";
+                        echo "<td>{$fila['CANTIDAD']}</td>";
                         echo "<td><input type='checkbox'></td>";
                         echo "</tr>";
                     }
