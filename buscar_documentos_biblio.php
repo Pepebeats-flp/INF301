@@ -63,12 +63,12 @@ oci_execute($resultado);
 <nav class="navbar navbar-light bg-light shadow-sm">
     <div class="container">
 
-        <span style="font-size: 20px;" class="d-flex align-items-center">
+        <span style="font-size: 20px;">
             <i class="fa-solid fa-user"></i> 
 
             <?php 
                 if (isset($usuario)) {
-                    echo $usuario;
+                    echo "Bibliotecario(a): ", $usuario;
             ?>
                     
                     <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
@@ -86,6 +86,21 @@ oci_execute($resultado);
         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
             <!-- Otro formulario u otros elementos según sea necesario -->
         </form>
+
+        <ul class="nav">
+        <li class="nav-item">
+            <a href="#" class="btn btn-dark me-4" aria-current="page">Administrar Catalogo</a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="btn btn-dark me-4">Revisar solicitudes</a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="btn btn-dark me-4">Registrar prestamo</a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="btn btn-dark">Devoluciones</a>
+        </li>
+        </ul>
 
     </div> 
 </nav>
@@ -124,18 +139,24 @@ oci_execute($resultado);
                         echo "<td>
                                 <form method='post' action='modificar_documento.php'>
                                     <input type='hidden' name='id' value='{$fila['IDENTIFICADOR']}'>
-                                    <button type='submit' class='btn btn-danger'>Modificar</button>
+                                    <button type='submit' class='btn btn-dark'>Modificar</button>
                                 </form>
                             </td>";
                         echo "<td>
-                                <form method='post' action='eliminar_documento.php'>
+                                <form method='post' action='eliminar_documento.php' onsubmit='return confirmarEliminar()'> <!-- Agrega onsubmit -->
                                     <input type='hidden' name='id' value='{$fila['IDENTIFICADOR']}'>
                                     <button type='submit' class='btn btn-danger'>Eliminar</button>
                                 </form>
                             </td>";
-                        echo "</tr>";
                     }
                     ?>
+
+                    <!-- Agrega este bloque de script al final de tu página o en la sección head -->
+                    <script>
+                        function confirmarEliminar() {
+                            return confirm("¿Estás seguro de que quieres eliminar este documento?");
+                        }
+                    </script>
                 </tbody>
             </table>
         </div>
