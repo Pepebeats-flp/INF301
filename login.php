@@ -37,6 +37,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     oci_free_statement($stmt);
     oci_close($conn);
 }
+
+// Mostrar la alerta de registro exitoso si el parámetro 'success' está presente
+if (isset($_GET["success"]) && $_GET["success"] == "true") {
+    echo '<div class="alert alert-success mt-3 m-5 text-center" role="alert">
+            ¡Registro exitoso! Ahora puedes iniciar sesión.
+        </div>';
+}
 ?>
 
 <!DOCTYPE html>
@@ -83,6 +90,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     
                     <div class="card-footer">
                         <a href="register.php">¿No tienes una cuenta? Regístrate</a>
+                    </div>
+                    <div class="card-footer">
+                        <a href="index.php">Consultar catalogo sin iniciar sesion</a>
                     </div>
                 </div>
             </div>

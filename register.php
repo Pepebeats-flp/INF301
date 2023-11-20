@@ -20,13 +20,7 @@
                     </div>
                     <div class="card-body ">
                         <form action="procesar_registro.php" method=post>
-                            <div class="mb-3 mt-3">
-                                <label for="rol" class="form-label">Rol</label>
-                                <select class="form-select" aria-label="Default select example" id="rol" name="rol" required>
-                                    <option value="1">Usuario</option>
-                                    <option value="2">Bibliotecario</option>
-                                </select>
-                            </div>
+                            
                             <div class="mb-3 mt-3">
                                 <label for="name" class="form-label">Nombre</label>
                                 <input type="text" class="form-control" id="name" name="name" required>

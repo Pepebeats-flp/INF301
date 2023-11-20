@@ -49,7 +49,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
                         
                         echo '<a href="login.php" class="btn btn-outline-dark" style="margin-left: 10px;">Iniciar Sesión</a>';
                         echo '<a href="register.php" class="btn btn-outline-dark" style="margin-left: 10px;">Registrarse</a>';
-                        
+                        echo '<div class="alert alert-danger shadow-sm rounded p-2 mt-2" role="alert" style="font-size: 16px;">
+                        Debes iniciar sesión o registrarte para poder solicitar documentos
+                        </div>';
                         
                         
                         
