@@ -82,6 +82,20 @@ if (isset($_GET["documento_creado"]) && $_GET["documento_creado"] == 1) {
 
 <br>
 
+<?php
+if (isset($_GET["modificado"]) && $_GET["modificado"] == "true") {
+    echo '<div class="alert alert-success mt-3 m-5 text-center" role="alert">
+            El documento ha sido modificado con exito.
+        </div>';
+}
+
+if (isset($_GET["eliminado"]) && $_GET["eliminado"] == "true") {
+    echo '<div class="alert alert-success mt-3 m-5 text-center" role="alert">
+            El documento ha sido eliminado con exito.
+        </div>';
+}
+?>
+
     
 
     <div class="container shadow-sm rounded p-2 mt-2">

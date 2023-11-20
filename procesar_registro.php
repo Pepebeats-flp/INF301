@@ -1,7 +1,6 @@
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Recibir datos del formulario
-    $rol = $_POST['rol'];
     $nombre = $_POST['name'];
     $apellido = $_POST['lastname'];
     $correo = $_POST['email'];
@@ -62,8 +61,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if (oci_execute($statement1) && oci_execute($statement2)) {
             // Registro exitoso, redirigir a login.php
-            header("Location: login.php");
+            
+            header("Location: login.php?success=true");
             exit(); // Asegurarse de que no se ejecuten más instrucciones después de la redirección
+
         } else {
             $error1 = oci_error($statement1);
             $error2 = oci_error($statement2);
