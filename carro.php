@@ -4,8 +4,8 @@ session_start();
 // Incluir la conexión a la base de datos
 require_once 'conexion.php';
 
-if (isset($_SESSION["usuario"])) {
-    $correo = $_SESSION["usuario"];
+if (isset($_SESSION["correo"])) {
+    $correo = $_SESSION["correo"];
 } else {
     // La sesión no está iniciada, redirigir a la página de inicio de sesión
     header("Location: login.php");
