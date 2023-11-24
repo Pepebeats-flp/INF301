@@ -1,0 +1,79 @@
+CREATE TABLE Documento (
+    Identificador NUMBER PRIMARY KEY, 
+    Tipo VARCHAR2(50),
+    Titulo VARCHAR2(50),
+    Autor VARCHAR2(50),
+    Editorial VARCHAR2(50),
+    Anio NUMBER,
+    Edicion VARCHAR2(50),
+    Categoria VARCHAR2(50),
+    Cantidad NUMBER
+);
+
+CREATE TABLE Ejemplar (
+    IdEjemplar NUMBER PRIMARY KEY, 
+    IdDocumento NUMBER,
+    Estado VARCHAR2(50),
+    Ubicacion VARCHAR2(50),
+    FOREIGN KEY (IdDocumento) REFERENCES Documento(Identificador)
+);
+
+CREATE TABLE Prestamo (
+    IdPrestamo NUMBER PRIMARY KEY, 
+    Tipo_Prestamo VARCHAR2(50),
+    IdEjemplar NUMBER,
+    Fecha_Prestamo DATE,
+    Hora_Prestamo TIMESTAMP(0),
+    Fecha_Devolucion DATE,
+    Hora_Devolucion TIMESTAMP(0),
+    Fecha_Devolucion_Real DATE,
+    Hora_Devolcion_Real TIMESTAMP(0),
+    FOREIGN KEY (IdEjemplar) REFERENCES Ejemplar(IdEjemplar)
+);
+
+CREATE TABLE Usuario (
+    Identificador NUMBER PRIMARY KEY, 
+    RUT VARCHAR2(9),
+    Nombres VARCHAR2(50),
+    Apellidos VARCHAR2(50),
+    Direccion VARCHAR2(50),
+    Telefono_Activo VARCHAR2(50)
+);
+
+CREATE TABLE Solicitud_Prestamo (
+    IdSolicitud NUMBER PRIMARY KEY, 
+    IdUsuario NUMBER,
+    Fecha_Solicitud DATE,
+    Hora_Solicitud TIMESTAMP(0),
+    FOREIGN KEY (IdUsuario) REFERENCES Usuario(Identificador)
+);
+
+CREATE TABLE Detalle_Solicitud_Prestamo (
+    IdSolicitud NUMBER PRIMARY KEY, 
+    IdEjemplar NUMBER,
+    FOREIGN KEY (IdSolicitud) REFERENCES Solicitud_Prestamo(IdSolicitud),
+    FOREIGN KEY (IdEjemplar) REFERENCES Ejemplar(IdEjemplar)
+);
+
+CREATE TABLE Cuentas_Usuario (
+    RUT VARCHAR2(9) PRIMARY KEY NOT NULL,
+    Correo VARCHAR2(100),
+    Clave VARCHAR2(50)
+);
+
+CREATE TABLE cuentas_personal (
+    IdCuenta INT PRIMARY KEY,
+    usuario VARCHAR(255),
+    contrasena VARCHAR(255),
+    tipo_cuenta VARCHAR(255)
+);
+
+CREATE SEQUENCE seq_personal
+   START WITH 1
+   INCREMENT BY 1
+   NOMAXVALUE
+   NOCYCLE
+   NOCACHE;
+
+ALTER TABLE cuentas_personal
+MODIFY IdCuenta NUMBER DEFAULT seq_personal.NEXTVAL NOT NULL;
