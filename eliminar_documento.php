@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["id"])) {
 
     // Ejecutar la sentencia
     if (oci_execute($stmt)) {
-        header("Location: indexbiblio.php?eliminado=true");  // Redirigir a la página principal después de eliminar
+        header("Location: indexbiblio.php?doc_eliminado=true");  // Redirigir a la página principal después de eliminar
         exit();
     } else {
         echo "Error al eliminar el registro: " . oci_error($conn);

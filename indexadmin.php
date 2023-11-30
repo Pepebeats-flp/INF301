@@ -64,10 +64,10 @@ if (isset($_GET["documento_creado"]) && $_GET["documento_creado"] == 1) {
 
         <ul class="nav">
         <li class="nav-item">
-            <a href="#" class="btn btn-dark me-4" aria-current="page">Consultar Catalogo</a>
+            <a href="indexadmin.php" class="btn btn-dark me-4" aria-current="page">Consultar Catalogo</a>
         </li>
         <li class="nav-item">
-            <a href="#" class="btn btn-dark me-4">Registrar ficha usuario</a>
+            <a href="fichas_usuario.php" class="btn btn-dark me-4">Fichas Usuarios</a>
         </li>
         <li class="nav-item">
             <a href="#" class="btn btn-dark me-4">Revisar solicitudes prestamo</a>

@@ -87,7 +87,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["id"])) {
     if (oci_execute($stmt)) {
         // Éxito al modificar el documento
         echo "Documento modificado con éxito";
-        header("Location: indexbiblio.php?modificado=true"); // Puedes redirigir a donde desees después de la modificación
+        header("Location: indexbiblio.php?doc_modificado=true"); // Puedes redirigir a donde desees después de la modificación
         exit();
     } else {
         // Error al modificar el documento
