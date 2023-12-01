@@ -1,9 +1,9 @@
 <?php
-$usuario_bd = 'Benjamin'; // Reemplaza con el nombre de usuario de tu base de datos
+$usuario_bd = 'system'; // Reemplaza con el nombre de usuario de tu base de datos
 $clave_bd = 'push1234'; // Reemplaza con la contraseña de tu base de datos
 $host_bd = 'localhost'; // Reemplaza con la dirección del servidor Oracle
 $puerto_bd = '1521'; // El puerto por defecto para Oracle es 1521
-$sid_bd = 'xe'; // Reemplaza con el SID de tu base de datos Oracle
+$sid_bd = 'XE'; // Reemplaza con el SID de tu base de datos Oracle
 
 // Construye la cadena de conexión
 $tns = "(DESCRIPTION =

@@ -3,9 +3,6 @@
 session_start();
 require_once 'conexion.php';
 
-// Iniciar la sesión
-session_start();
-
 // Verificar si la variable de sesión "carrito" no está definida o es null
 if (!isset($_SESSION["carrito"]) || $_SESSION["carrito"] === null) {
     // Inicializar la variable de sesión "carrito" como un array vacío
@@ -154,9 +151,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["agregar_al_carrito"]))
                             echo "<td>{$fila['ANIO']}</td>";
                             echo "<td>{$fila['TIPO']}</td>";
                             echo "<td>{$fila['CATEGORIA']}</td>";
-                            echo "<td>{$fila['IDENTIFICADOR']}</td>"; // Agregar el ID del documento
-                            echo "<td><input type='checkbox' name='documentos_seleccionados[]' value='{$fila['IDENTIFICADOR']}'></td>";
-                            // Mover el botón dentro del bucle para tener acceso a cada IDENTIFICADOR
+                            echo "<td>{$fila['CANTIDAD']}</td>"; // Agregar el ID del documento
                             echo "<td><button type='submit' class='btn btn-dark' name='agregar_al_carrito' value='{$fila['IDENTIFICADOR']}'>Agregar a Carrito</button></td>";
                             echo "</tr>";
                         }

@@ -14,6 +14,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
     header("Location: index.php"); // Redirigir al inicio de sesión después de cerrar la sesión
     exit();
 }
+
+// Procesar la solicitud de agregar al carrito
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["agregar_al_carrito"])) {
+    if (isset($_POST['documentos_seleccionados']) && is_array($_POST['documentos_seleccionados'])) {
+        foreach ($_POST['documentos_seleccionados'] as $documento_id) {
+            // Obtener información del documento desde la base de datos
+            $sql = "SELECT * FROM Documento WHERE IDENTIFICADOR = :documento_id";
+            $stmt = oci_parse($conn, $sql);
+            oci_bind_by_name($stmt, ":documento_id", $documento_id);
+            oci_execute($stmt);
+            $documento = oci_fetch_assoc($stmt);
+
+            // Agregar el documento al carrito
+            $_SESSION["carrito"][] = $documento;
+        }
+
+        // Opcional: Mostrar un mensaje de éxito o redirigir a la página del carrito
+        $_SESSION['success_message'] = "Documentos agregados al carrito exitosamente.";
+        // Puedes redirigir a la página del carrito si lo deseas
+        header("Location: carro.php");
+        exit();
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -27,6 +51,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
     <script src="https://kit.fontawesome.com/a4490af95b.js" crossorigin="anonymous"></script>
 </head>
 <body>
+<?php
+    // Verificar si hay un mensaje de éxito y mostrarlo
+    if (isset($_SESSION['success_message'])) {
+        echo $_SESSION['success_message'];
+        unset($_SESSION['success_message']); // Limpiar el mensaje después de mostrarlo
+    }
+    ?>
     <nav class="navbar navbar-light bg-light shadow-sm">
         <div class="container">
             <span style="font-size: 20px;">
@@ -129,9 +160,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
 
     <div class="container shadow-sm rounded p-2 mt-2">
         <h2>Todos los documentos: </h2>
+
         <div class="p-1 mb-3" style="overflow: scroll; max-height:300px;">
             <table class="table table-striped">
-
                 <thead>
                     <tr>
                         <th scope="col">Título</th>
@@ -159,13 +190,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
                         echo "<td>{$fila['TIPO']}</td>";
                         echo "<td>{$fila['CATEGORIA']}</td>";
                         echo "<td>{$fila['CANTIDAD']}</td>";
-                        echo "<td><input type='checkbox'></td>";
+                        echo "<td>";
+
+                        // Formulario independiente para cada fila
+                        echo "<form method='post' action='" . htmlspecialchars($_SERVER["PHP_SELF"]) . "'>";
+                        echo "<input type='hidden' name='documentos_seleccionados[]' value='{$fila['IDENTIFICADOR']}'>";
+                        echo "<button type='submit' class='btn btn-dark' name='agregar_al_carrito'>Agregar a Carrito</button>";
+                        echo "</form>";
+
+                        echo "</td>";
                         echo "</tr>";
                     }
                     ?>
                 </tbody>
             </table>
         </div>
+
         <div style="text-align: right;">
             <a href="index.php" class="btn btn-outline-dark">Volver</a>
             <button class="btn btn-dark">Agregar a Solicitud</button>

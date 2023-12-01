@@ -10,11 +10,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $direccion = $_POST['direccion'];
 
     // Datos de conexión a la base de datos Oracle
-    $usuario = 'Benjamin';
+    $usuario = 'system';
     $contrasena = 'push1234';
     $host = 'localhost';
     $puerto = '1521';
-    $sid = 'xe';
+    $sid = 'XE';
 
     // Construye la cadena de conexión
     $tns = "(DESCRIPTION =

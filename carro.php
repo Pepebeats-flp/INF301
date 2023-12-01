@@ -27,6 +27,80 @@ if (isset($_SESSION["carrito"]) && is_array($_SESSION["carrito"])) {
     // Si el carrito no está definido o es null, muestra un mensaje indicando que está vacío
     echo "El carrito está vacío.";
 }
+
+// Procesar la solicitud de enviar la solicitud
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["enviar_solicitud"])) {
+    // Obtener el id del usuario desde la base de datos
+    $correoUsuario = $_SESSION['correo'];
+    $sqlIdUsuario = "SELECT u.IDENTIFICADOR FROM Usuario u JOIN cuentas_Usuario cu ON u.rut = cu.rut WHERE cu.correo = :correo";
+    $stmtIdUsuario = oci_parse($conn, $sqlIdUsuario);
+    oci_bind_by_name($stmtIdUsuario, ":correo", $correoUsuario);
+    oci_execute($stmtIdUsuario);
+
+    if ($filaIdUsuario = oci_fetch_assoc($stmtIdUsuario)) {
+        $idUsuario = $filaIdUsuario['IDENTIFICADOR'];
+
+        // Obtener fecha y hora actuales
+        $fechaSolicitud = date('Y-m-d');
+        $horaSolicitud = date('H:i:s');
+
+        // Insertar en la tabla SolicitudPrestamo
+        $sqlInsertSolicitud = "INSERT INTO Solicitud_Prestamo (idUsuario, fecha_Solicitud, hora_Solicitud) VALUES (:idUsuario, TO_DATE(:fecha_Solicitud, 'YYYY-MM-DD'), TO_TIMESTAMP(:hora_Solicitud, 'HH24:MI:SS')) RETURNING idSolicitud INTO :idSolicitud";
+        $stmtInsertSolicitud = oci_parse($conn, $sqlInsertSolicitud);
+        oci_bind_by_name($stmtInsertSolicitud, ":idUsuario", $idUsuario);
+        oci_bind_by_name($stmtInsertSolicitud, ":fecha_Solicitud", $fechaSolicitud);
+        oci_bind_by_name($stmtInsertSolicitud, ":hora_Solicitud", $horaSolicitud);
+        oci_bind_by_name($stmtInsertSolicitud, ":idSolicitud", $idSolicitud, 10); // El tercer parámetro es la longitud máxima del campo
+
+        // Ejecutar la inserción
+        oci_execute($stmtInsertSolicitud);
+
+        // Obtener el idSolicitud generado por la inserción
+        $idSolicitud = $idSolicitud ?? null; // Si no se asigna, establecerlo en null
+
+        // Insertar en la tabla DetalleSolicitudPrestamo
+        foreach ($carrito as $item) {
+            // Obtener idEjemplar de la tabla Ejemplar usando el IDENTIFICADOR del carrito
+            $idDocumento = $item['IDENTIFICADOR'];
+            $sqlObtenerIdEjemplar = "SELECT idEjemplar FROM Ejemplar WHERE idDocumento = :idDocumento AND Estado = 'Bueno'";
+            $stmtObtenerIdEjemplar = oci_parse($conn, $sqlObtenerIdEjemplar);
+            oci_bind_by_name($stmtObtenerIdEjemplar, ":idDocumento", $idDocumento);
+            oci_execute($stmtObtenerIdEjemplar);
+            $idEjemplar = oci_fetch_assoc($stmtObtenerIdEjemplar)['IDEJEMPLAR'];
+
+            // Liberar recursos de la consulta de idEjemplar
+            oci_free_statement($stmtObtenerIdEjemplar);
+
+            // Insertar en la tabla DetalleSolicitudPrestamo
+            $sqlInsertDetalle = "INSERT INTO Detalle_Solicitud_Prestamo (idSolicitud, idEjemplar) VALUES (:idSolicitud, :idEjemplar)";
+            $stmtInsertDetalle = oci_parse($conn, $sqlInsertDetalle);
+            oci_bind_by_name($stmtInsertDetalle, ":idSolicitud", $idSolicitud);
+            oci_bind_by_name($stmtInsertDetalle, ":idEjemplar", $idEjemplar);
+
+            // Ejecutar la inserción
+            $resultInsertDetalle = oci_execute($stmtInsertDetalle);
+
+            if (!$resultInsertDetalle) {
+                $errorDetalle = oci_error($stmtInsertDetalle);
+                echo "Error en la inserción de DetalleSolicitudPrestamo: " . $errorDetalle['message'];
+            }
+
+            // Liberar recursos de la consulta de detalle
+            oci_free_statement($stmtInsertDetalle);
+        }
+
+        // Limpia los recursos de la consulta
+        oci_free_statement($stmtIdUsuario);
+        oci_free_statement($stmtInsertSolicitud);
+
+        // Limpiar el carrito después de procesar la solicitud
+        $_SESSION["carrito"] = array();
+
+    } else {
+        // No se encontró el usuario, maneja la situación según tus necesidades
+        echo "No se encontró el usuario.";
+    }
+}
 ?>
 
 
@@ -61,8 +135,8 @@ if (isset($_SESSION["carrito"]) && is_array($_SESSION["carrito"])) {
                     </tr>
                 </thead>
                 <tbody>
-                    <?php
-                    // Recorrer los elementos del carrito almacenados en la sesión
+                <?php
+                if (!empty($_SESSION['carrito'])) {
                     foreach ($_SESSION['carrito'] as $item) {
                         echo "<tr>";
                         echo "<td>{$item['TITULO']}</td>";
@@ -75,13 +149,19 @@ if (isset($_SESSION["carrito"]) && is_array($_SESSION["carrito"])) {
                         echo "<td><input type='checkbox'></td>";
                         echo "</tr>";
                     }
-                    ?>
+                } else {
+                    echo "<tr><td colspan='8'>El carrito está vacío.</td></tr>";
+                }
+                ?>
+
                 </tbody>
             </table>
         </div>
-        <div style="text-align: right;">
-            <a href="index.php" class="btn btn-dark">Volver</a>
-            <button class="btn btn-dark">Enviar Solicitud</button>
+        <div style="text-align: right; margin: 1%;">
+            <a href="index.php" class="btn btn-dark me-2">Volver</a>
+            <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" style="display: inline-block;">
+                <button type="submit" class="btn btn-dark" name="enviar_solicitud">Enviar Solicitud</button>
+            </form>
         </div>
     </div>
 </body>
