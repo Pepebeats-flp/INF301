@@ -89,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["idsolicitud"])) {
     // Obtén el ID de la solicitud desde el formulario
     $idSolicitud = $_POST["idsolicitud"];
 
-    // Realiza la consulta para obtener el IDEJEMPLAR desde DETALLE_SOLICITUD_PRESTAMO
+    // Realiza la consulta para obtener todos los IDEJEMPLAR desde DETALLE_SOLICITUD_PRESTAMO
     $sqlDetalles = "SELECT IDEJEMPLAR FROM DETALLE_SOLICITUD_PRESTAMO WHERE IDSOLICITUD = :idsolicitud";
     $stmtDetalles = oci_parse($conn, $sqlDetalles);
     oci_bind_by_name($stmtDetalles, ':idsolicitud', $idSolicitud);
@@ -97,62 +97,71 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["idsolicitud"])) {
 
     // Verifica si se encontraron detalles
     if ($filaDetalles = oci_fetch_assoc($stmtDetalles)) {
-        $idejemplar = $filaDetalles['IDEJEMPLAR'];
+        // Inicializa la tabla Bootstrap
+        echo '<div class="container shadow-sm rounded p-2 mt-2">';
+        echo '<h2>Detalles del Documento</h2>';
+        echo '<div class="p-1 mb-3" style="overflow: scroll; max-height:300px;">';
+        echo '<table class="table table-striped">';
 
-        // Realiza la consulta para obtener el IDDOCUMENTO desde EJEMPLAR
-        $sqlDocumento = "SELECT IDDOCUMENTO, TITULO, AUTOR, EDICION, EDITORIAL, ANIO, TIPO, CATEGORIA, CANTIDAD FROM EJEMPLAR
-            JOIN DOCUMENTO ON EJEMPLAR.IDDOCUMENTO = DOCUMENTO.IDENTIFICADOR
-            WHERE IDEJEMPLAR = :idejemplar";
-        $stmtDocumento = oci_parse($conn, $sqlDocumento);
-        oci_bind_by_name($stmtDocumento, ':idejemplar', $idejemplar);
-        oci_execute($stmtDocumento);
-
-        // Muestra los detalles del documento en una tabla Bootstrap
-        echo '<div class="container mt-4">';
-        echo '<h2>Detalles solicitud</h2>';
-        echo '<div class="table-responsive">';
-        echo '<table class="table table-bordered">';
-        echo '<thead class="thead-dark">';
+        // Encabezado de la tabla
+        echo '<thead>';
         echo '<tr>';
-        echo '<th>Título</th>';
-        echo '<th>Autor</th>';
-        echo '<th>Edición</th>';
-        echo '<th>Editorial</th>';
-        echo '<th>Año</th>';
-        echo '<th>Tipo</th>';
-        echo '<th>Categoría</th>';
-        echo '<th>Cantidad</th>';
+        echo '<th scope="col">Título</th>';
+        echo '<th scope="col">Autor</th>';
+        echo '<th scope="col">Edición</th>';
+        echo '<th scope="col">Editorial</th>';
+        echo '<th scope="col">Año</th>';
+        echo '<th scope="col">Tipo</th>';
+        echo '<th scope="col">Categoría</th>';
+        echo '<th scope="col">Cantidad</th>';
         echo '</tr>';
         echo '</thead>';
+
+        // Cuerpo de la tabla
         echo '<tbody>';
 
-        // Muestra los detalles del documento en la tabla
-        if ($filaDocumento = oci_fetch_assoc($stmtDocumento)) {
-            echo '<tr>';
-            echo '<td>' . $filaDocumento['TITULO'] . '</td>';
-            echo '<td>' . $filaDocumento['AUTOR'] . '</td>';
-            echo '<td>' . $filaDocumento['EDICION'] . '</td>';
-            echo '<td>' . $filaDocumento['EDITORIAL'] . '</td>';
-            echo '<td>' . $filaDocumento['ANIO'] . '</td>';
-            echo '<td>' . $filaDocumento['TIPO'] . '</td>';
-            echo '<td>' . $filaDocumento['CATEGORIA'] . '</td>';
-            echo '<td>' . $filaDocumento['CANTIDAD'] . '</td>';
-            echo '</tr>';
-        } else {
-            echo '<tr><td colspan="8">No se encontraron detalles del documento.</td></tr>';
-        }
+        // Itera sobre los IDEJEMPLAR encontrados
+        do {
+            $idejemplar = $filaDetalles['IDEJEMPLAR'];
 
+            // Realiza la consulta para obtener los detalles del documento desde EJEMPLAR
+            $sqlDocumento = "SELECT IDDOCUMENTO, TITULO, AUTOR, EDICION, EDITORIAL, ANIO, TIPO, CATEGORIA, CANTIDAD FROM EJEMPLAR
+                JOIN DOCUMENTO ON EJEMPLAR.IDDOCUMENTO = DOCUMENTO.IDENTIFICADOR
+                WHERE IDEJEMPLAR = :idejemplar";
+            $stmtDocumento = oci_parse($conn, $sqlDocumento);
+            oci_bind_by_name($stmtDocumento, ':idejemplar', $idejemplar);
+            oci_execute($stmtDocumento);
+
+            // Muestra los detalles del documento en la tabla Bootstrap
+            while ($filaDocumento = oci_fetch_assoc($stmtDocumento)) {
+                echo '<tr>';
+                echo '<td>' . $filaDocumento['TITULO'] . '</td>';
+                echo '<td>' . $filaDocumento['AUTOR'] . '</td>';
+                echo '<td>' . $filaDocumento['EDICION'] . '</td>';
+                echo '<td>' . $filaDocumento['EDITORIAL'] . '</td>';
+                echo '<td>' . $filaDocumento['ANIO'] . '</td>';
+                echo '<td>' . $filaDocumento['TIPO'] . '</td>';
+                echo '<td>' . $filaDocumento['CATEGORIA'] . '</td>';
+                echo '<td>' . $filaDocumento['CANTIDAD'] . '</td>';
+                echo '</tr>';
+            }
+        } while ($filaDetalles = oci_fetch_assoc($stmtDetalles));
+
+        // Cierra la tabla Bootstrap
         echo '</tbody>';
         echo '</table>';
         echo '</div>';
         echo '</div>';
     } else {
-        echo '<div class="alert alert-warning" role="alert">No se encontró IDEJEMPLAR para la solicitud proporcionada.</div>';
+        echo '<div class="alert alert-warning" role="alert">No se encontraron documentos para la solicitud proporcionada.</div>';
     }
 } else {
     echo '<div class="alert alert-danger" role="alert">ID de solicitud no proporcionado.</div>';
 }
 ?>
+
+
+
 
 
 
