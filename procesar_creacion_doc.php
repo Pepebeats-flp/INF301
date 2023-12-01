@@ -49,14 +49,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["titulo"], $_POST["auto
     $result = oci_execute($stmt);
 
     if ($result) {
-        // Éxito al insertar el documento
-        echo '<div class="alert alert-danger" role="alert">
-        A simple danger alert—check it out!
-      </div>';
-        header("Location: indexbiblio.php?documento_creado=1");
+        header("Location: indexbiblio.php?documento_creado=true");
         exit();
     } else {
-        // Error al insertar el documento
+        
         $error = oci_error($stmt);
         echo "Error al agregar el documento: " . $error["message"];
     }

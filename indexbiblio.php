@@ -14,12 +14,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
     header("Location: index.php"); // Redirigir al inicio de sesión después de cerrar la sesión
     exit();
 }
-
-// Verificar si se ha creado un documento
-if (isset($_GET["documento_creado"]) && $_GET["documento_creado"] == 1) {
-    $alert_message = "Documento creado con éxito";
-    $alert_class = "alert-success"; // Puedes cambiar esto según el tipo de alerta que desees
-}
 ?>
 
 <!DOCTYPE html>
@@ -64,10 +58,10 @@ if (isset($_GET["documento_creado"]) && $_GET["documento_creado"] == 1) {
 
         <ul class="nav">
         <li class="nav-item">
-            <a href="#" class="btn btn-dark me-4" aria-current="page">Administrar Catalogo</a>
+            <a href="indexbiblio.php" class="btn btn-dark me-4" aria-current="page">Administrar Catalogo</a>
         </li>
         <li class="nav-item">
-            <a href="#" class="btn btn-dark me-4">Revisar solicitudes</a>
+            <a href="solicitudes_prestamo.php" class="btn btn-dark me-4">Revisar solicitudes</a>
         </li>
         <li class="nav-item">
             <a href="#" class="btn btn-dark me-4">Registrar prestamo</a>
@@ -92,6 +86,13 @@ if (isset($_GET["doc_modificado"]) && $_GET["doc_modificado"] == "true") {
 if (isset($_GET["doc_eliminado"]) && $_GET["doc_eliminado"] == "true") {
     echo '<div class="alert alert-success mt-3 m-5 text-center" role="alert">
             El documento ha sido eliminado con exito.
+        </div>';
+}
+
+// Verificar si se ha creado un documento
+if (isset($_GET["documento_creado"]) && $_GET["documento_creado"] == "true") {
+    echo '<div class="alert alert-success mt-3 m-5 text-center" role="alert">
+            El documento ha sido creado con exito.
         </div>';
 }
 ?>
