@@ -11,7 +11,7 @@ if (isset($_SESSION["usuario"])) {
 // Cerrar sesión
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
     session_destroy();
-    header("Location: index.php"); // Redirigir al inicio de sesión después de cerrar la sesión
+    header("Location: index.php"); 
     exit();
 }
 
@@ -55,7 +55,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
         </span>
 
         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-            <!-- Otro formulario u otros elementos según sea necesario -->
         </form>
 
         <ul class="nav">
@@ -63,13 +62,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
             <a href="indexadmin.php" class="btn btn-dark me-4" aria-current="page">Consultar Catalogo</a>
         </li>
         <li class="nav-item">
-            <a href="fichas_usuario.php" class="btn btn-dark me-4">Registrar ficha usuario</a>
+            <a href="fichas_usuario.php" class="btn btn-dark me-4">Fichas Usuarios</a>
         </li>
         <li class="nav-item">
-            <a href="#" class="btn btn-dark me-4">Revisar solicitudes prestamo</a>
-        </li>
-        <li class="nav-item">
-            <a href="#" class="btn btn-dark">Prestamos vencidos</a>
+            <a href="prestamos_vencidos.php" class="btn btn-dark">Prestamos vencidos</a>
         </li>
         </ul>
 
@@ -143,11 +139,9 @@ if (isset($_GET["ficha_creada"]) && $_GET["ficha_creada"] == "true") {
                 
         }
     } else {
-        // Mensaje en caso de error en la consulta
         echo 'Error en la consulta a la base de datos';
     }
-
-    // Fin del contenedor
+ 
     echo '</div>';
 ?>
 
