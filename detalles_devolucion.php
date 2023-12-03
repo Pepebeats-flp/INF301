@@ -74,70 +74,71 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
 <br>
 
 <?php
-
-require "conexion.php";
-
 // Verifica si se envió el formulario y se proporcionó el IDPRESTAMO
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["idprestamo"])) {
     // Obtén el IDPRESTAMO desde el formulario
     $idPrestamo = $_POST["idprestamo"];
 
-    // Consulta para obtener los detalles del préstamo (utilizando LIMIT 1)
-$sqlDetallesPrestamo = "SELECT 
-IDPRESTAMO, 
-TIPO_PRESTAMO, 
-FECHA_PRESTAMO, 
-FECHA_DEVOLUCION,
-HORA_DEVOLUCION
-FROM 
-PRESTAMO
-WHERE 
-IDPRESTAMO = :idprestamo
-AND 
-ROWNUM = 1"; // Utiliza ROWNUM para limitar a una fila
-$stmtDetallesPrestamo = oci_parse($conn, $sqlDetallesPrestamo);
-oci_bind_by_name($stmtDetallesPrestamo, ':idprestamo', $idPrestamo);
-oci_execute($stmtDetallesPrestamo);
+    
+    $sqlDetallesPrestamo = "SELECT 
+    IDPRESTAMO, 
+    TIPO_PRESTAMO, 
+    FECHA_PRESTAMO, 
+    FECHA_DEVOLUCION,
+    HORA_DEVOLUCION,
+    FECHA_DEVOLUCION_REAL,
+    HORA_DEVOLUCION_REAL
+    FROM 
+    PRESTAMO
+    WHERE 
+    IDPRESTAMO = :idprestamo
+    AND 
+    ROWNUM = 1"; 
+    $stmtDetallesPrestamo = oci_parse($conn, $sqlDetallesPrestamo);
+    oci_bind_by_name($stmtDetallesPrestamo, ':idprestamo', $idPrestamo);
+    oci_execute($stmtDetallesPrestamo);
 
-// Muestra la tabla con los detalles del préstamo
-echo '<div class="container shadow-sm rounded p-2 mt-2">';
-echo '<h2>Detalles del Préstamo</h2>';
-echo '<div class="p-1 mb-3">';
-echo '<table class="table table-striped">';
-echo '<thead>';
-echo '<tr>';
-echo '<th scope="col">IDPRESTAMO</th>';
-echo '<th scope="col">Tipo de Préstamo</th>';
-echo '<th scope="col">Prestamo</th>';
-echo '<th scope="col">Devolucion</th>';
-echo '<th scope="col">Estado</th>'; // Nueva columna "Estado"
-echo '</tr>';
-echo '</thead>';
-echo '<tbody>';
+    // Muestra la tabla con los detalles del préstamo
+    echo '<div class="container shadow-sm rounded p-2 mt-2">';
+    echo '<h2>Detalles del Préstamo</h2>';
+    echo '<div class="p-1 mb-3">';
+    echo '<table class="table table-striped">';
+    echo '<thead>';
+    echo '<tr>';
+    echo '<th scope="col">IDPRESTAMO</th>';
+    echo '<th scope="col">Tipo de Préstamo</th>';
+    echo '<th scope="col">Prestamo</th>';
+    echo '<th scope="col">Devolucion</th>';
+    echo '<th scope="col">Estado</th>'; 
+    echo '</tr>';
+    echo '</thead>';
+    echo '<tbody>';
 
-// Muestra los detalles del préstamo en la tabla
-while ($filaDetallesPrestamo = oci_fetch_assoc($stmtDetallesPrestamo)) {
-// Calcula el estado del préstamo
-$fechaActual = strtotime(date('Y-m-d'));
-$fechaDevolucion = date('Y-m-d', strtotime($filaDetallesPrestamo['FECHA_DEVOLUCION']));
+    // Muestra los detalles del préstamo en la tabla
+    while ($filaDetallesPrestamo = oci_fetch_assoc($stmtDetallesPrestamo)) {
+        // Calcula el estado del préstamo
+        $fechaActual = date('Y/m/d', strtotime(date('Y-m-d')));
+        $fechaDevolucion = date('Y/d/m', strtotime($filaDetallesPrestamo['FECHA_DEVOLUCION']));
 
-    $estado = ($fechaDevolucion >= $fechaActual)
-        ? 'A tiempo'
-        : 'Atrasado';
+        $estado = ($fechaDevolucion >= $fechaActual)
+            ? 'A tiempo'
+            : 'Atrasado';
+        
+        echo '<tr>';
+        echo "<td>{$filaDetallesPrestamo['IDPRESTAMO']}</td>";
+        echo "<td>{$filaDetallesPrestamo['TIPO_PRESTAMO']}</td>";
+        echo "<td>{$filaDetallesPrestamo['FECHA_PRESTAMO']}</td>";
+        echo "<td>{$filaDetallesPrestamo['FECHA_DEVOLUCION']}</td>";
+        echo "<td>{$estado}</td>"; 
+        echo '</tr>';
 
-echo '<tr>';
-echo "<td>{$filaDetallesPrestamo['IDPRESTAMO']}</td>";
-echo "<td>{$filaDetallesPrestamo['TIPO_PRESTAMO']}</td>";
-echo "<td>{$filaDetallesPrestamo['FECHA_PRESTAMO']}</td>";
-echo "<td>{$filaDetallesPrestamo['FECHA_DEVOLUCION']}</td>";
-echo "<td>{$estado}</td>"; // Nueva columna "Estado"
-echo '</tr>';
-}
+        $fechaDevolucionReal = $filaDetallesPrestamo['FECHA_DEVOLUCION_REAL'];
+    }
 
-echo '</tbody>';
-echo '</table>';
-echo '</div>';
-echo '</div>';
+    echo '</tbody>';
+    echo '</table>';
+    echo '</div>';
+    echo '</div>';
 
 
     // Consulta para obtener los documentos relacionados al préstamo
@@ -187,10 +188,10 @@ echo '</div>';
     echo '</table>';
 
     
-    echo '<form method="post" action="procesar_prestamo.php">';
-    echo '<input type="hidden" name="idsolicitud" value="' . $idPrestamo . '">';
-    echo '<button type="submit" class="btn btn-dark">Procesar devolucion</button>';
-    echo '<a href="devoluciones.php" class="btn btn-dark" style="margin-left: 10px;">Cancelar</a>';
+    echo '<form method="post" action="procesar_devolucion.php">';
+    echo '<input type="hidden" name="idprestamo" value="' . $idPrestamo . '">';
+    echo '<button type="submit" class="btn btn-dark" ' . ($fechaDevolucionReal !== null ? 'disabled' : '') . '>Procesar devolucion</button>';
+    echo '<a href="devoluciones.php" class="btn btn-dark" style="margin-left: 10px;">Volver</a>';
     echo '</form>';
 
     echo '</div>';
