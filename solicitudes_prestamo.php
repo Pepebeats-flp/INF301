@@ -92,7 +92,7 @@ if (isset($_GET["prestamo_creado"]) && $_GET["prestamo_creado"] == "true") {
 
 <?php
 // Realizar la consulta a la base de datos para obtener los datos de las solicitudes de préstamo
-$sql = "SELECT S.IDSOLICITUD, S.IDUSUARIO, U.NOMBRES, U.RUT, S.FECHA_SOLICITUD, S.HORA_SOLICITUD
+$sql = "SELECT S.IDSOLICITUD, S.IDUSUARIO, U.NOMBRES, U.APELLIDOS, U.RUT, S.FECHA_SOLICITUD, S.HORA_SOLICITUD
         FROM SOLICITUD_PRESTAMO S 
         JOIN Usuario U ON S.IDUSUARIO = U.IDENTIFICADOR ORDER BY IDSOLICITUD ASC";
 
