@@ -53,7 +53,7 @@ oci_execute($resultado);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resultados de búsqueda</title>
+    <title>Resultados de busqueda</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <link rel="stylesheet" href="catalogo.css">
     <script src="https://kit.fontawesome.com/a4490af95b.js" crossorigin="anonymous"></script>
@@ -92,13 +92,10 @@ oci_execute($resultado);
             <a href="#" class="btn btn-dark me-4" aria-current="page">Administrar Catalogo</a>
         </li>
         <li class="nav-item">
-            <a href="#" class="btn btn-dark me-4">Revisar solicitudes</a>
+            <a href="solicitudes_prestamo.php" class="btn btn-dark me-4">Solicitudes</a>
         </li>
         <li class="nav-item">
-            <a href="#" class="btn btn-dark me-4">Registrar prestamo</a>
-        </li>
-        <li class="nav-item">
-            <a href="#" class="btn btn-dark">Devoluciones</a>
+            <a href="devoluciones.php" class="btn btn-dark">Devoluciones</a>
         </li>
         </ul>
 

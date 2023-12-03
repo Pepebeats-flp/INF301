@@ -27,7 +27,7 @@ if (isset($_GET["documento_creado"]) && $_GET["documento_creado"] == 1) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solicitudes de prestamo</title>
+    <title>Solicitudes</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <link rel="stylesheet" href="catalogo.css">
     <script src="https://kit.fontawesome.com/a4490af95b.js" crossorigin="anonymous"></script>
@@ -67,13 +67,10 @@ if (isset($_GET["documento_creado"]) && $_GET["documento_creado"] == 1) {
             <a href="indexbiblio.php" class="btn btn-dark me-4" aria-current="page">Administrar Catalogo</a>
         </li>
         <li class="nav-item">
-            <a href="solicitudes_prestamo.php" class="btn btn-dark me-4">Revisar solicitudes</a>
+            <a href="solicitudes_prestamo.php" class="btn btn-dark me-4">Solicitudes</a>
         </li>
         <li class="nav-item">
-            <a href="#" class="btn btn-dark me-4">Registrar prestamo</a>
-        </li>
-        <li class="nav-item">
-            <a href="#" class="btn btn-dark">Devoluciones</a>
+            <a href="devoluciones.php" class="btn btn-dark">Devoluciones</a>
         </li>
         </ul>
 
@@ -82,30 +79,39 @@ if (isset($_GET["documento_creado"]) && $_GET["documento_creado"] == 1) {
 
 <br>
 
+<?php 
+
+// Verificar si se ha creado un documento
+if (isset($_GET["prestamo_creado"]) && $_GET["prestamo_creado"] == "true") {
+    echo '<div class="alert alert-success mt-3 m-5 text-center" role="alert">
+            El prestamo ha sido registrado con exito.
+        </div>';
+}
+
+?>
 
 <?php
 // Realizar la consulta a la base de datos para obtener los datos de las solicitudes de préstamo
 $sql = "SELECT S.IDSOLICITUD, S.IDUSUARIO, U.NOMBRES, U.RUT, S.FECHA_SOLICITUD, S.HORA_SOLICITUD
-        FROM SOLICITUD_PRESTAMO S
-        JOIN Usuario U ON S.IDUSUARIO = U.IDENTIFICADOR";
+        FROM SOLICITUD_PRESTAMO S 
+        JOIN Usuario U ON S.IDUSUARIO = U.IDENTIFICADOR ORDER BY IDSOLICITUD ASC";
 
 $resultado = oci_parse($conn, $sql);
 oci_execute($resultado);
 ?>
 
 <div class="container shadow-sm rounded p-2 mt-2">
-    <h2>Administración de solicitudes de préstamo</h2>
+    <h2>Solicitudes de prestamo</h2>
 
-    <div class="p-1 mb-3" style="overflow: scroll; max-height:300px;">
+    <div class="p-1 mb-3" >
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th scope="col">ID Solicitud</th>
-                    <th scope="col">ID Usuario</th>
+                    <th scope="col">Solicitud</th>
                     <th scope="col">Nombres</th>
+                    <th scope="col">Apellidos</th>
                     <th scope="col">RUT</th>
                     <th scope="col">Fecha Solicitud</th>
-                    <th scope="col">Hora Solicitud</th>
                     <th scope="col">Detalles</th>
                 </tr>
             </thead>
@@ -115,11 +121,10 @@ oci_execute($resultado);
                 while ($fila = oci_fetch_assoc($resultado)) {
                     echo "<tr>";
                     echo "<td>{$fila['IDSOLICITUD']}</td>";
-                    echo "<td>{$fila['IDUSUARIO']}</td>";
                     echo "<td>{$fila['NOMBRES']}</td>";
+                    echo "<td>{$fila['APELLIDOS']}</td>";
                     echo "<td>{$fila['RUT']}</td>";
                     echo "<td>{$fila['FECHA_SOLICITUD']}</td>";
-                    echo "<td>{$fila['HORA_SOLICITUD']}</td>";
                     echo "<td>
                             <form method='post' action='detalles_solicitud.php'>
                             <input type='hidden' name='idsolicitud' value='{$fila['IDSOLICITUD']}'>
