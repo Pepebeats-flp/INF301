@@ -20,6 +20,9 @@ $title = isset($_GET['title']) ? $_GET['title'] : null;
 $author = isset($_GET['author']) ? $_GET['author'] : null;
 $topic = isset($_GET['topic']) ? $_GET['topic'] : null;
 
+// Inicializar $search
+$search = isset($_POST['search']) ? $_POST['search'] : '';
+
 // Construir la consulta SQL con filtros
 $sql = "SELECT * FROM Documento WHERE 1=1";
 
@@ -41,6 +44,10 @@ if (!empty($author)) {
 
 if (!empty($topic)) {
     $sql .= " AND TEMA LIKE '%$topic%'";
+}
+
+if (!empty($search)) {
+    $sql .= " AND TITULO LIKE '%$search%'";
 }
 
 // Ejecutar la consulta
@@ -108,6 +115,12 @@ oci_execute($resultado);
 <br>
 
     <div class="container shadow-sm rounded p-2 mt-2">
+        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+            <div class="mb-3">
+                <label for="search">Buscar por título:</label>
+                <input type="text" class="form-control" id="search" name="search" placeholder="Ingrese el título" value="<?php echo htmlspecialchars($search); ?>">
+            </div>
+        </form>
         <h2>Documentos encontrados:</h2>
         <div class="p-1 mb-3" style="overflow: scroll; max-height:300px;">
             <table class="table table-striped">
@@ -142,6 +155,24 @@ oci_execute($resultado);
                     
                 </tbody>
             </table>
+            <script>
+                $(document).ready(function() {
+                    $('#search').on('input', function() {
+                        var searchValue = $(this).val();
+
+                        $.ajax({
+                            type: 'POST',
+                            url: '<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>',
+                            data: { search: searchValue },
+                            success: function(response) {
+                                $('#resultTable').html(response);
+                            }
+                        });
+
+                        
+                    });
+                });
+            </script>
         </div>
         <div style="text-align: right;">
             <a href="indexadmin.php" class="btn btn-outline-dark">Volver</a>

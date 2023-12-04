@@ -20,6 +20,9 @@ $title = isset($_GET['title']) ? $_GET['title'] : null;
 $author = isset($_GET['author']) ? $_GET['author'] : null;
 $topic = isset($_GET['topic']) ? $_GET['topic'] : null;
 
+// Inicializar $search
+$search = isset($_POST['search']) ? $_POST['search'] : '';
+
 // Construir la consulta SQL con filtros
 $sql = "SELECT * FROM Documento WHERE 1=1";
 
@@ -43,6 +46,10 @@ if (!empty($topic)) {
     $sql .= " AND TEMA LIKE '%$topic%'";
 }
 
+if (!empty($search)) {
+    $sql .= " AND TITULO LIKE '%$search%'";
+}
+
 // Ejecutar la consulta
 $resultado = oci_parse($conn, $sql);
 oci_execute($resultado);
@@ -57,6 +64,7 @@ oci_execute($resultado);
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <link rel="stylesheet" href="catalogo.css">
     <script src="https://kit.fontawesome.com/a4490af95b.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 </head>
 <body>
 
@@ -89,7 +97,7 @@ oci_execute($resultado);
 
         <ul class="nav">
         <li class="nav-item">
-            <a href="#" class="btn btn-dark me-4" aria-current="page">Administrar Catalogo</a>
+            <a href="indexbiblio.php" class="btn btn-dark me-4" aria-current="page">Administrar Catalogo</a>
         </li>
         <li class="nav-item">
             <a href="solicitudes_prestamo.php" class="btn btn-dark me-4">Solicitudes</a>
@@ -106,6 +114,13 @@ oci_execute($resultado);
 
     <div class="container shadow-sm rounded p-2 mt-2">
         <h2>Documentos encontrados:</h2>
+        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+            <div class="mb-3">
+                <label for="search">Buscar por título:</label>
+                <input type="text" class="form-control" id="search" name="search" placeholder="Ingrese el título" value="<?php echo htmlspecialchars($search); ?>">
+            </div>
+        </form>
+
         <div class="p-1 mb-3" style="overflow: scroll; max-height:300px;">
             <table class="table table-striped">
                 <thead>
@@ -147,15 +162,31 @@ oci_execute($resultado);
                             </td>";
                     }
                     ?>
-
-                    <!-- Agrega este bloque de script al final de tu página o en la sección head -->
-                    <script>
-                        function confirmarEliminar() {
-                            return confirm("¿Estás seguro de que quieres eliminar este documento?");
-                        }
-                    </script>
                 </tbody>
             </table>
+            <script>
+                $(document).ready(function() {
+                    $('#search').on('input', function() {
+                        var searchValue = $(this).val();
+
+                        $.ajax({
+                            type: 'POST',
+                            url: '<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>',
+                            data: { search: searchValue },
+                            success: function(response) {
+                                $('#resultTable').html(response);
+                            }
+                        });
+
+                        
+                    });
+                });
+            </script>
+            <script>
+                function confirmarEliminar() {
+                    return confirm("¿Estás seguro de que quieres eliminar este documento?");
+                }
+            </script>
         </div>
         <div style="text-align: right;">
             <a href="indexbiblio.php" class="btn btn-outline-dark">Volver</a>

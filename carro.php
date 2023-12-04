@@ -28,6 +28,22 @@ if (isset($_SESSION["carrito"]) && is_array($_SESSION["carrito"])) {
     echo "El carrito está vacío.";
 }
 
+// Procesar la solicitud de eliminar item
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["eliminar_item"])) {
+    $idItemEliminar = $_POST["eliminar_item"];
+
+    // Buscar y eliminar el item del carrito
+    foreach ($carrito as $key => $item) {
+        if ($item['IDENTIFICADOR'] == $idItemEliminar) {
+            unset($carrito[$key]);
+            break;
+        }
+    }
+
+    // Actualizar la variable de sesión con el carrito modificado
+    $_SESSION["carrito"] = $carrito;
+}
+
 // Procesar la solicitud de enviar la solicitud
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["enviar_solicitud"])) {
     // Obtener el id del usuario desde la base de datos
@@ -131,7 +147,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["enviar_solicitud"])) {
                         <th scope="col">Tipo</th>
                         <th scope="col">Categoría</th>
                         <th scope="col">#</th>
-                        <th scope="col">Confirmar</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -146,7 +161,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["enviar_solicitud"])) {
                         echo "<td>{$item['TIPO']}</td>";
                         echo "<td>{$item['CATEGORIA']}</td>";
                         echo "<td>{$item['CANTIDAD']}</td>";
-                        echo "<td><input type='checkbox'></td>";
+                        echo "<td><form method='post' action='" . htmlspecialchars($_SERVER["PHP_SELF"]) . "'><input type='hidden' name='eliminar_item' value='{$item['IDENTIFICADOR']}'><button type='submit' class='btn btn-danger btn-sm'>Eliminar</button></form></td>";
                         echo "</tr>";
                     }
                 } else {

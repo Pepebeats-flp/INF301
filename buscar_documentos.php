@@ -1,11 +1,8 @@
 <?php
-// Incluir la conexión a la base de datos
 session_start();
 require_once 'conexion.php';
 
-// Verificar si la variable de sesión "carrito" no está definida o es null
 if (!isset($_SESSION["carrito"]) || $_SESSION["carrito"] === null) {
-    // Inicializar la variable de sesión "carrito" como un array vacío
     $_SESSION["carrito"] = array();
 }
 
@@ -15,7 +12,8 @@ $title = isset($_GET['title']) ? $_GET['title'] : null;
 $author = isset($_GET['author']) ? $_GET['author'] : null;
 $topic = isset($_GET['topic']) ? $_GET['topic'] : null;
 
-// Construir la consulta SQL con filtros
+$search = isset($_POST['search']) ? $_POST['search'] : null;
+
 $sql = "SELECT * FROM Documento WHERE 1=1";
 
 if (!empty($document_type)) {
@@ -38,7 +36,10 @@ if (!empty($topic)) {
     $sql .= " AND TEMA LIKE '%$topic%'";
 }
 
-// Ejecutar la consulta
+if (!empty($search)) {
+    $sql .= " AND TITULO LIKE '%$search%'";
+}
+
 $resultado = oci_parse($conn, $sql);
 oci_execute($resultado);
 
@@ -70,7 +71,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["agregar_al_carrito"]))
     header("Location: carro.php");
     exit();
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -126,36 +126,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["agregar_al_carrito"]))
     <div class="container shadow-sm rounded p-2 mt-2">
         <h2>Documentos encontrados:</h2>
         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+            <div class="mb-3">
+                <label for="search">Buscar por título:</label>
+                <input type="text" class="form-control" id="search" name="search" placeholder="Ingrese el título" value="<?php echo htmlspecialchars($search); ?>">
+            </div>
+        </form>
+        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
             <div class="p-1 mb-3" style="overflow: scroll; max-height:300px;">
                 <table class="table table-striped">
                     <thead>
-                        <tr>
-                            <th scope="col">Título</th>
-                            <th scope="col">Autor</th>
-                            <th scope="col">Edición</th>
-                            <th scope="col">Año</th>
-                            <th scope="col">Tipo</th>
-                            <th scope="col">Categoría</th>
-                            <th scope="col">#</th>
-                            <th scope="col">Agregar</th>
-                        </tr>
+                    <tr>
+                        <th scope="col">Título</th>
+                        <th scope="col">Autor</th>
+                        <th scope="col">Edición</th>
+                        <th scope="col">Año</th>
+                        <th scope="col">Tipo</th>
+                        <th scope="col">Categoría</th>
+                        <th scope="col">#</th>
+                        <th scope="col">Agregar</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        <?php
-                        // Iterar sobre los resultados y mostrar cada fila
-                        while ($fila = oci_fetch_assoc($resultado)) {
-                            echo "<tr>";
-                            echo "<td>{$fila['TITULO']}</td>";
-                            echo "<td>{$fila['AUTOR']}</td>";
-                            echo "<td>{$fila['EDICION']}</td>";
-                            echo "<td>{$fila['ANIO']}</td>";
-                            echo "<td>{$fila['TIPO']}</td>";
-                            echo "<td>{$fila['CATEGORIA']}</td>";
-                            echo "<td>{$fila['CANTIDAD']}</td>"; // Agregar el ID del documento
-                            echo "<td><button type='submit' class='btn btn-dark' name='agregar_al_carrito' value='{$fila['IDENTIFICADOR']}'>Agregar a Carrito</button></td>";
-                            echo "</tr>";
-                        }
-                        ?>
+                    <?php
+                    // Iterar sobre los resultados y mostrar cada fila
+                    while ($fila = oci_fetch_assoc($resultado)) {
+                        echo "<tr>";
+                        echo "<td>{$fila['TITULO']}</td>";
+                        echo "<td>{$fila['AUTOR']}</td>";
+                        echo "<td>{$fila['EDICION']}</td>";
+                        echo "<td>{$fila['ANIO']}</td>";
+                        echo "<td>{$fila['TIPO']}</td>";
+                        echo "<td>{$fila['CATEGORIA']}</td>";
+                        echo "<td>{$fila['CANTIDAD']}</td>"; // Agregar el ID del documento
+                        echo "<td><button type='submit' class='btn btn-dark' name='agregar_al_carrito' value='{$fila['IDENTIFICADOR']}'>Agregar a Carrito</button></td>";
+                        echo "</tr>";
+                    }
+                    ?>
                     </tbody>
                 </table>
             </div>
@@ -164,5 +170,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["agregar_al_carrito"]))
             <a href="index.php" class="btn btn-outline-dark">Volver</a>
         </div>
     </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#search').on('input', function() {
+                var searchValue = $(this).val();
+
+                $.ajax({
+                    type: 'POST',
+                    url: '<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>',
+                    data: { search: searchValue },
+                    success: function(response) {
+                        $('#resultTable').html(response);
+                    }
+                });
+                
+            });
+        });
+    </script>
 </body>
 </html>
