@@ -13,7 +13,7 @@ if (isset($_SESSION["usuario"])) {
 // Cerrar sesión
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
     session_destroy();
-    header("Location: index.php"); // Redirigir al inicio de sesión después de cerrar la sesión
+    header("Location: index.php"); 
     exit();
 }
 
@@ -57,7 +57,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
             </span>
 
             <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-                <!-- Otro formulario u otros elementos según sea necesario -->
             </form>
 
             <ul class="nav">
@@ -68,10 +67,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
                 <a href="fichas_usuario.php" class="btn btn-dark me-4">Fichas Usuario</a>
             </li>
             <li class="nav-item">
-                <a href="#" class="btn btn-dark me-4">Revisar solicitudes prestamo</a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="btn btn-dark">Prestamos vencidos</a>
+                <a href="prestamos_vencidos.php" class="btn btn-dark">Prestamos vencidos</a>
             </li>
             </ul>
 
@@ -165,8 +161,6 @@ if (isset($_GET['success'])) {
 
 
 
-    <!-- Agrega aquí cualquier otro contenido necesario -->
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
 
 
@@ -175,7 +169,6 @@ if (isset($_GET['success'])) {
             var confirmacion = confirm("¿Estás seguro de eliminar este usuario?");
 
             if (confirmacion) {
-                // Redireccionar a eliminar_ficha.php con el identificador
                 window.location.href = "eliminar_ficha.php?id=" + identificador;
             }
         }

@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Devoluciones</title>
+    <title>Prestamos Vencidos</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <link rel="stylesheet" href="catalogo.css">
     <script src="https://kit.fontawesome.com/a4490af95b.js" crossorigin="anonymous"></script>
@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
 
             <?php 
                 if (isset($usuario)) {
-                    echo "Bibliotecario(a): ", $usuario;
+                    echo "Administrativo(a): ", $usuario;
             ?>
                     
                     <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
@@ -53,18 +53,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
         </span>
 
         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-            
+           
         </form>
 
         <ul class="nav">
         <li class="nav-item">
-            <a href="indexbiblio.php" class="btn btn-dark me-4" aria-current="page">Administrar Catalogo</a>
+            <a href="indexadmin.php" class="btn btn-dark me-4" aria-current="page">Consultar Catalogo</a>
         </li>
         <li class="nav-item">
-            <a href="solicitudes_prestamo.php" class="btn btn-dark me-4">Solicitudes</a>
+            <a href="fichas_usuario.php" class="btn btn-dark me-4">Fichas Usuarios</a>
         </li>
         <li class="nav-item">
-            <a href="devoluciones.php" class="btn btn-dark">Devoluciones</a>
+            <a href="prestamos_vencidos.php" class="btn btn-dark">Prestamos vencidos</a>
         </li>
         </ul>
 
@@ -117,7 +117,7 @@ $stmtConsultaPrestamo = oci_parse($conn, $sqlConsultaPrestamo);
 oci_execute($stmtConsultaPrestamo);
 
 echo '<div class="container shadow-sm rounded p-2 mt-2">';
-echo '<h2>Prestamos activos </h2>';
+echo '<h2>Prestamos vencidos </h2>';
 
 echo '<div class="p-1 mb-3">';
 echo '<table class="table table-striped">';
@@ -140,86 +140,82 @@ echo '<tbody>';
 // Variable para mantener el último IDPRESTAMO registrado
 $ultimoIdPrestamo = null;
 
-// Itera sobre los resultados y muestra cada fila
+// Itera sobre los resultados y muestra solo las filas en las que el estado sea "Atrasado" y devueltoEl sea null
 while ($fila = oci_fetch_assoc($stmtConsultaPrestamo)) {
     if ($fila['IDPRESTAMO'] != $ultimoIdPrestamo) {
-        $fechaActual = new DateTime();  // Fecha actual
+        $fechaActual = new DateTime(); 
         $fechaDevolucion = DateTime::createFromFormat('d/m/y', $fila['FECHA_DEVOLUCION']);  // Fecha de devolución
 
         $estado = ($fechaDevolucion >= $fechaActual)
             ? 'A tiempo'
             : 'Atrasado';
 
+        // Mostrar solo las filas donde el estado sea "Atrasado" y devueltoEl sea null
+        if ($estado === 'Atrasado' && $fila['HORA_DEVOLUCION_REAL'] === null) {
+            // Obtén el RUT del usuario en base al IDUSUARIO
+            $sqlObtenerRUT = "SELECT RUT FROM USUARIO WHERE IDENTIFICADOR = :idusuario";
+            $stmtObtenerRUT = oci_parse($conn, $sqlObtenerRUT);
+            oci_bind_by_name($stmtObtenerRUT, ':idusuario', $fila['IDUSUARIO']);
+            oci_execute($stmtObtenerRUT);
+            $rutUsuario = null;
 
+            while ($filaRUT = oci_fetch_assoc($stmtObtenerRUT)) {
+                $rutUsuario = $filaRUT['RUT'];
+                break; 
+            }
 
-        // Obtén el RUT del usuario en base al IDUSUARIO
-        $sqlObtenerRUT = "SELECT RUT FROM USUARIO WHERE IDENTIFICADOR = :idusuario";
-        $stmtObtenerRUT = oci_parse($conn, $sqlObtenerRUT);
-        oci_bind_by_name($stmtObtenerRUT, ':idusuario', $fila['IDUSUARIO']);
-        oci_execute($stmtObtenerRUT);
-        $rutUsuario = null;
+            // Verifica si HORA_DEVOLUCION_REAL es NULL
+            $devueltoEl = ($fila['HORA_DEVOLUCION_REAL'] === null) ? "No Devuelto" : $fila['HORA_DEVOLUCION_REAL'];
 
-        while ($filaRUT = oci_fetch_assoc($stmtObtenerRUT)) {
-            $rutUsuario = $filaRUT['RUT'];
-            break; 
+            // Convierte las fechas a objetos DateTime
+            $fechaDevolucion = DateTime::createFromFormat('d/m/Y', $fila['FECHA_DEVOLUCION']);
+            $fechaDevolucionReal = $fila['FECHA_DEVOLUCION_REAL']
+                ? DateTime::createFromFormat('d/m/Y', $fila['FECHA_DEVOLUCION_REAL'])
+                : null;
+
+            // Verifica si las fechas se pudieron convertir correctamente
+            if ($fechaDevolucion && ($fechaDevolucionReal || $fechaDevolucionReal === null)) {
+                // Calcula la diferencia en días solo si FECHA_DEVOLUCION_REAL no es null
+                $diferenciaDias = $fechaDevolucionReal !== null ? $fechaDevolucionReal->diff($fechaDevolucion)->days : 0;
+
+                // Calcula la sanción en semanas solo si el estado no es 'A tiempo'
+                $sancionSemanas = ($fila['FECHA_DEVOLUCION'] > $fila['FECHA_DEVOLUCION_REAL'] && $estado == 'Atrasado')
+                    ? floor($diferenciaDias / 7 + 1)
+                    : 0;
+
+                // Construye la cadena de sanción
+                $sancion = ($devueltoEl === "No Devuelto" || $fila['FECHA_DEVOLUCION'] < $fila['FECHA_DEVOLUCION_REAL'])
+                    ? '-' 
+                    : ($sancionSemanas > 0 ? $sancionSemanas . ' semana(s)' : '');
+            } else {
+                echo 'Error al convertir las fechas a objetos DateTime.';
+            }
+
+            echo '<tr>';
+            echo "<td>{$fila['IDPRESTAMO']}</td>";
+            echo "<td>{$fila['TIPO_PRESTAMO']}</td>";
+            echo "<td>{$rutUsuario}</td>"; 
+            echo "<td>{$fila['HORA_PRESTAMO']}</td>";
+            echo "<td>{$fila['HORA_DEVOLUCION']}</td>";
+            echo "<td>{$estado}</td>";
+            echo "<td>{$devueltoEl}</td>";
+            echo "<td>{$sancion}</td>"; 
+            echo "<td>
+                    <form method='post' action='detalles_devolucion_admin.php'>
+                        <input type='hidden' name='idprestamo' value='{$fila['IDPRESTAMO']}'>
+                        <button type='submit' class='btn btn-dark'>Detalles</button>
+                    </form>
+                </td>";
+            echo "<td>";
+            
+            echo "<form method='post' action='' onsubmit='return confirm(\"¿Enviar notificacion?\");'>
+                        <input type='hidden' name='' value=''>
+                        <button type='submit' class='btn btn-primary'>Notificar</button>
+                        </form>";
+            echo "</td>";
+
+            echo '</tr>';
         }
-
-        // Verifica si HORA_DEVOLUCION_REAL es NULL
-        $devueltoEl = ($fila['HORA_DEVOLUCION_REAL'] === null) ? "No Devuelto" : $fila['HORA_DEVOLUCION_REAL'];
-
-        // Convierte las fechas a objetos DateTime
-        $fechaDevolucion = DateTime::createFromFormat('d/m/Y', $fila['FECHA_DEVOLUCION']);
-        $fechaDevolucionReal = $fila['FECHA_DEVOLUCION_REAL']
-            ? DateTime::createFromFormat('d/m/Y', $fila['FECHA_DEVOLUCION_REAL'])
-            : null;
-
-        // Verifica si las fechas se pudieron convertir correctamente
-        if ($fechaDevolucion && ($fechaDevolucionReal || $fechaDevolucionReal === null)) {
-
-            $diferenciaDias = $fechaDevolucionReal !== null ? $fechaDevolucionReal->diff($fechaDevolucion)->days : 0;
-
-            $sancionSemanas = ($fila['FECHA_DEVOLUCION'] > $fila['FECHA_DEVOLUCION_REAL'] && $estado == 'Atrasado')
-                ? floor($diferenciaDias / 7 + 1)
-                : 0;
-
-            // Construye la cadena de sanción
-            $sancion = ($devueltoEl === "No Devuelto" || $fila['FECHA_DEVOLUCION'] < $fila['FECHA_DEVOLUCION_REAL'])
-                ? '-' // No devuelto o devuelto a tiempo, no hay sanción
-                : ($sancionSemanas > 0 ? $sancionSemanas . ' semana(s)' : '');
-        } else {
-            echo 'Error al convertir las fechas a objetos DateTime.';
-        }
-
-
-        echo '<tr>';
-        echo "<td>{$fila['IDPRESTAMO']}</td>";
-        echo "<td>{$fila['TIPO_PRESTAMO']}</td>";
-        echo "<td>{$rutUsuario}</td>"; 
-        echo "<td>{$fila['HORA_PRESTAMO']}</td>";
-        echo "<td>{$fila['HORA_DEVOLUCION']}</td>";
-        echo "<td>{$estado}</td>";
-        echo "<td>{$devueltoEl}</td>";
-        echo "<td>{$sancion}</td>"; 
-        echo "<td>
-                <form method='post' action='detalles_devolucion.php'>
-                    <input type='hidden' name='idprestamo' value='{$fila['IDPRESTAMO']}'>
-                    <button type='submit' class='btn btn-dark'>Detalles</button>
-                </form>
-            </td>";
-        echo "<td>";
-        if ($fila['HORA_DEVOLUCION_REAL'] !== null) {
-            echo "<form method='post' action='eliminar_devolucion.php' onsubmit='return confirm(\"¿Está seguro de eliminar esta devolución?\");'>
-                    <input type='hidden' name='idprestamo' value='{$fila['IDPRESTAMO']}'>
-                    <button type='submit' class='btn btn-danger'>Eliminar</button>
-                    </form>";
-        } else {
-            echo "<button class='btn btn-danger' disabled>Eliminar</button>";
-        }
-        echo "</td>";
-                 
-
-
-        echo '</tr>';
 
         // Actualiza el último IDPRESTAMO registrado
         $ultimoIdPrestamo = $fila['IDPRESTAMO'];

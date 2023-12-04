@@ -99,13 +99,10 @@ oci_execute($resultado);
             <a href="#" class="btn btn-dark me-4" aria-current="page">Consultar Catalogo</a>
         </li>
         <li class="nav-item">
-            <a href="#" class="btn btn-dark me-4">Registrar ficha usuario</a>
+            <a href="#" class="btn btn-dark me-4">Fichas Usuarios</a>
         </li>
         <li class="nav-item">
-            <a href="#" class="btn btn-dark me-4">Revisar solicitudes prestamo</a>
-        </li>
-        <li class="nav-item">
-            <a href="#" class="btn btn-dark">Prestamos vencidos</a>
+            <a href="prestamos_vencidos.php" class="btn btn-dark">Prestamos vencidos</a>
         </li>
         </ul>
 

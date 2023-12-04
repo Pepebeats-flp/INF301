@@ -11,7 +11,7 @@ if (isset($_SESSION["usuario"])) {
 // Cerrar sesión
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
     session_destroy();
-    header("Location: index.php"); // Redirigir al inicio de sesión después de cerrar la sesión
+    header("Location: index.php"); 
     exit();
 }
 ?>
@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
 
             <?php 
                 if (isset($usuario)) {
-                    echo "Bibliotecario(a): ", $usuario;
+                    echo "Administrativo(a): ", $usuario;
             ?>
                     
                     <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
@@ -53,18 +53,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
         </span>
 
         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-            <!-- Otro formulario u otros elementos según sea necesario -->
+            
         </form>
 
         <ul class="nav">
         <li class="nav-item">
-            <a href="indexbiblio.php" class="btn btn-dark me-4" aria-current="page">Administrar Catalogo</a>
+            <a href="indexadmin.php" class="btn btn-dark me-4" aria-current="page">Consultar Catalogo</a>
         </li>
         <li class="nav-item">
-            <a href="solicitudes_prestamo.php" class="btn btn-dark me-4">Solicitudes</a>
+            <a href="fichas_usuario.php" class="btn btn-dark me-4">Fichas Usuarios</a>
         </li>
         <li class="nav-item">
-            <a href="devoluciones.php" class="btn btn-dark">Devoluciones</a>
+            <a href="prestamos_vencidos.php" class="btn btn-dark">Prestamos vencidos</a>
         </li>
         </ul>
 
@@ -76,10 +76,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
 <?php
 // Verifica si se envió el formulario y se proporcionó el IDPRESTAMO
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["idprestamo"])) {
-    // Obtén el IDPRESTAMO desde el formulario
+    
     $idPrestamo = $_POST["idprestamo"];
 
-    
+    // Consulta para obtener los detalles del préstamo
     $sqlDetallesPrestamo = "SELECT 
     IDPRESTAMO, 
     TIPO_PRESTAMO, 
@@ -98,7 +98,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["idprestamo"])) {
     oci_bind_by_name($stmtDetallesPrestamo, ':idprestamo', $idPrestamo);
     oci_execute($stmtDetallesPrestamo);
 
-    // Muestra la tabla con los detalles del préstamo
+    
     echo '<div class="container shadow-sm rounded p-2 mt-2">';
     echo '<h2>Detalles del Préstamo</h2>';
     echo '<div class="p-1 mb-3">';
@@ -114,7 +114,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["idprestamo"])) {
     echo '</thead>';
     echo '<tbody>';
 
-    // Muestra los detalles del préstamo en la tabla
+    
     while ($filaDetallesPrestamo = oci_fetch_assoc($stmtDetallesPrestamo)) {
         // Calcula el estado del préstamo
         $fechaActual = date('Y/m/d', strtotime(date('Y-m-d')));
@@ -189,9 +189,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["idprestamo"])) {
 
     
     echo '<form method="post" action="procesar_devolucion.php">';
-    echo '<input type="hidden" name="idprestamo" value="' . $idPrestamo . '">';
-    echo '<button type="submit" class="btn btn-dark" ' . ($fechaDevolucionReal !== null ? 'disabled' : '') . '>Procesar devolucion</button>';
-    echo '<a href="devoluciones.php" class="btn btn-dark" style="margin-left: 10px;">Volver</a>';
+    echo '<a href="prestamos_vencidos.php" class="btn btn-dark" style="margin-left: 10px;">Volver</a>';
     echo '</form>';
 
     echo '</div>';

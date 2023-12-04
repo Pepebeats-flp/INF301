@@ -65,10 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
             <a href="fichas_usuario.php" class="btn btn-dark me-4">Fichas Usuarios</a>
         </li>
         <li class="nav-item">
-            <a href="#" class="btn btn-dark me-4">Revisar solicitudes prestamo</a>
-        </li>
-        <li class="nav-item">
-            <a href="#" class="btn btn-dark">Prestamos vencidos</a>
+            <a href="prestamos_vencidos.php" class="btn btn-dark">Prestamos vencidos</a>
         </li>
         </ul>
 
