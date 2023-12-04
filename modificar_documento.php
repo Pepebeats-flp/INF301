@@ -1,21 +1,18 @@
 <?php
 session_start();
 
-// Incluir la conexión a la base de datos
 require_once 'conexion.php';
 
 if (isset($_SESSION["usuario"])) {
     $usuario = $_SESSION["usuario"];
 }
 
-// Cerrar sesión
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
     session_destroy();
     header("Location: index.php"); // Redirigir al inicio de sesión después de cerrar la sesión
     exit();
 }
 
-// Obtener el ID del documento a modificar (asegúrate de recibirlo correctamente)
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["id"])) {
     $documento_id = $_POST["id"];
 
@@ -43,7 +40,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["id"])) {
     <script src="https://kit.fontawesome.com/a4490af95b.js" crossorigin="anonymous"></script>
 </head>
 
-<!-- Body Responsivo para usuarios y bibliotecarios -->
 <body>
     <nav class="navbar navbar-light bg-light shadow-sm">
         <div class="container">
@@ -64,7 +60,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["id"])) {
                 ?>
             </span>
             <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-                <!-- Otro formulario u otros elementos según sea necesario -->
             </form>
         </div> 
     </nav>

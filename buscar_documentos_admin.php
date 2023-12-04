@@ -91,7 +91,6 @@ oci_execute($resultado);
         </span>
 
         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-            <!-- Otro formulario u otros elementos según sea necesario -->
         </form>
 
         <ul class="nav">

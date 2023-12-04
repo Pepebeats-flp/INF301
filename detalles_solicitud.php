@@ -59,7 +59,6 @@ if (isset($_GET["documento_creado"]) && $_GET["documento_creado"] == 1) {
         </span>
 
         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-            <!-- Otro formulario u otros elementos según sea necesario -->
         </form>
 
         <ul class="nav">
@@ -81,9 +80,7 @@ if (isset($_GET["documento_creado"]) && $_GET["documento_creado"] == 1) {
 
 
 <?php
-// Verifica si se envió el formulario
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["idsolicitud"])) {
-    // Obtén el ID de la solicitud desde el formulario
     $idSolicitud = $_POST["idsolicitud"];
 
     // Realiza la consulta para obtener todos los IDEJEMPLAR desde DETALLE_SOLICITUD_PRESTAMO
@@ -94,13 +91,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["idsolicitud"])) {
 
     // Verifica si se encontraron detalles
     if ($filaDetalles = oci_fetch_assoc($stmtDetalles)) {
-        // Inicializa la tabla Bootstrap
+
         echo '<div class="container shadow-sm rounded p-2 mt-2">';
         echo '<h2>Detalles solicitud</h2>';
         echo '<div class="p-1 mb-3">';
         echo '<table class="table table-striped">';
-
-        // Encabezado de la tabla
         echo '<thead>';
         echo '<tr>';
         echo '<th scope="col">Título</th>';
@@ -114,14 +109,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["idsolicitud"])) {
         echo '</tr>';
         echo '</thead>';
 
-        // Cuerpo de la tabla
         echo '<tbody>';
 
-        // Itera sobre los IDEJEMPLAR encontrados
         do {
             $idejemplar = $filaDetalles['IDEJEMPLAR'];
 
-            // Realiza la consulta para obtener los detalles del documento desde EJEMPLAR
             $sqlDocumento = "SELECT IDDOCUMENTO, TITULO, AUTOR, EDICION, EDITORIAL, ANIO, TIPO, CATEGORIA, CANTIDAD FROM EJEMPLAR
                 JOIN DOCUMENTO ON EJEMPLAR.IDDOCUMENTO = DOCUMENTO.IDENTIFICADOR
                 WHERE IDEJEMPLAR = :idejemplar";
@@ -144,11 +136,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["idsolicitud"])) {
             }
         } while ($filaDetalles = oci_fetch_assoc($stmtDetalles));
 
-        // Cierra la tabla Bootstrap
         echo '</tbody>';
         echo '</table>';
 
-        // Agrega el formulario con el botón para procesar el préstamo
         echo '<form method="post" action="procesar_prestamo.php">';
         echo '<input type="hidden" name="idsolicitud" value="' . $idSolicitud . '">';
         echo '<button type="submit" class="btn btn-dark">Procesar prestamo</button>';
@@ -166,19 +156,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["idsolicitud"])) {
     echo '<div class="alert alert-danger" role="alert">ID de solicitud no proporcionado.</div>';
 }
 ?>
-
-
-
-
-
-
-
-
-    
-            
-        
-
-    
-
 </body>
 </html>

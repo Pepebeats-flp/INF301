@@ -37,7 +37,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["idprestamo"])) {
     echo '<div class="alert alert-danger" role="alert">ID de préstamo no proporcionado.</div>';
 }
 
-// Cierra la conexión a la base de datos
 oci_close($conn);
 ?>
 

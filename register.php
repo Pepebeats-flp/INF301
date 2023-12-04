@@ -9,7 +9,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
-<!-- Body Responsivo para usuarios y bibliotecarios -->
 <body>
     <div class="container mt-5 mb-5" style="margin : 0 auto; width: 90%;">
         <div class="row justify-content-center">

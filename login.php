@@ -1,10 +1,8 @@
 <?php
-// Incluir la conexión a la base de datos
 require_once 'conexion.php';
 
 session_start();
 
-// Verificar si el usuario ya está autenticado
 if (isset($_SESSION['usuario'])) {
     header("Location: index.php"); // Redirigir a la página de inicio
     exit();
@@ -15,7 +13,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $correo = $_POST["correo"];
     $clave = $_POST["clave"];
 
-    // Consultar la base de datos para verificar las credenciales
     $consulta = "SELECT * FROM cuentas_usuario WHERE correo = :correo";
     $stmt = oci_parse($conn, $consulta);
 
@@ -24,8 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     oci_execute($stmt);
 
     if ($row = oci_fetch_assoc($stmt)) {
-        // Verificar la contraseña utilizando password_verify
-        $claveAlmacenada = $row['CLAVE']; // Suponiendo que la columna se llama CLAVE
+        $claveAlmacenada = $row['CLAVE']; 
 
         if (password_verify($clave, $claveAlmacenada)) {
             // Usuario autenticado, iniciar sesión
@@ -44,7 +40,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     oci_close($conn);
 }
 
-// Mostrar la alerta de registro exitoso si el parámetro 'success' está presente
 if (isset($_GET["success"]) && $_GET["success"] == "true") {
     echo '<div class="alert alert-success mt-3 m-5 text-center" role="alert">
             ¡Registro exitoso! Ahora puedes iniciar sesión.

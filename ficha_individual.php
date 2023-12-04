@@ -108,7 +108,6 @@ if (isset($_GET['success'])) {
 
 <div class="container">
         <?php
-        // Obtener el identificador único de la persona desde la URL
         $identificador = $_GET['id'];
 
         // Realizar la consulta a la base de datos para obtener los detalles de la persona
@@ -153,7 +152,6 @@ if (isset($_GET['success'])) {
             
             <?php
         } else {
-            // No se encontraron detalles para el identificador proporcionado
             echo 'Usuario no encontrado.';
         }
         ?>

@@ -53,7 +53,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
         </span>
 
         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-            <!-- Otro formulario u otros elementos según sea necesario -->
         </form>
 
         <ul class="nav">
@@ -76,7 +75,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
 <?php
 // Verifica si se envió el formulario y se proporcionó el IDPRESTAMO
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["idprestamo"])) {
-    // Obtén el IDPRESTAMO desde el formulario
     $idPrestamo = $_POST["idprestamo"];
 
     
@@ -141,7 +139,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["idprestamo"])) {
     echo '</div>';
 
 
-    // Consulta para obtener los documentos relacionados al préstamo
     $sqlDocumentosPrestamo = "SELECT D.TITULO, D.AUTOR, D.EDICION, D.EDITORIAL, D.ANIO, D.TIPO, D.CATEGORIA, D.CANTIDAD
                               FROM PRESTAMO P
                               JOIN EJEMPLAR E ON P.IDEJEMPLAR = E.IDEJEMPLAR
@@ -151,7 +148,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["idprestamo"])) {
     oci_bind_by_name($stmtDocumentosPrestamo, ':idprestamo', $idPrestamo);
     oci_execute($stmtDocumentosPrestamo);
 
-    // Muestra la tabla con los documentos relacionados al préstamo
     echo '<div class="container shadow-sm rounded p-2 mt-2">';
     echo '<h2>Documentos Relacionados al Préstamo</h2>';
     echo '<div class="p-1 mb-3">';

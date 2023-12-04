@@ -31,7 +31,6 @@ $identificador = $_GET['id'];
     <script src="https://kit.fontawesome.com/a4490af95b.js" crossorigin="anonymous"></script>
 </head>
 
-<!-- Body Responsivo para usuarios y bibliotecarios -->
 <body>
     <nav class="navbar navbar-light bg-light shadow-sm">
         <div class="container">
@@ -57,7 +56,6 @@ $identificador = $_GET['id'];
             </span>
 
             <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-                <!-- Otro formulario u otros elementos según sea necesario -->
             </form>
 
             <ul class="nav">
@@ -80,7 +78,6 @@ $identificador = $_GET['id'];
         
         <form action="procesar_mod_ficha.php" method="post">
             
-            <!-- Agrega el campo oculto para almacenar el ID -->
             <input type="hidden" name="id" value="<?php echo $identificador; ?>">
 
             <div class="form-group mt-2">
@@ -118,10 +115,8 @@ $identificador = $_GET['id'];
 
             <br>
 
-            <!-- Resto de los campos del formulario -->
 
             <div style="text-align: left;">
-                <!-- Cambia el texto del botón para reflejar la acción de modificación -->
                 <button type="submit" class="btn btn-dark">Modificar</button>
                 <a href="ficha_individual.php?id=<?php echo $identificador; ?>" class="btn btn-dark">Cancelar</a>
             </div>

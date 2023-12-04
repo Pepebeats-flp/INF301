@@ -8,14 +8,12 @@ if (isset($_SESSION["usuario"])) {
     $usuario = $_SESSION["usuario"];
 }
 
-// Cerrar sesión
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
     session_destroy();
     header("Location: index.php"); // Redirigir al inicio de sesión después de cerrar la sesión
     exit();
 }
 
-// Verificar si se ha creado un documento
 if (isset($_GET["documento_creado"]) && $_GET["documento_creado"] == 1) {
     $alert_message = "Documento creado con éxito";
     $alert_class = "alert-success"; // Puedes cambiar esto según el tipo de alerta que desees
@@ -59,7 +57,6 @@ if (isset($_GET["documento_creado"]) && $_GET["documento_creado"] == 1) {
         </span>
 
         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-            <!-- Otro formulario u otros elementos según sea necesario -->
         </form>
 
         <ul class="nav">

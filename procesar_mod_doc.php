@@ -1,21 +1,18 @@
 <?php
 session_start();
 
-// Incluir la conexión a la base de datos
 require_once 'conexion.php';
 
 if (isset($_SESSION["usuario"])) {
     $usuario = $_SESSION["usuario"];
 }
 
-// Cerrar sesión
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
     session_destroy();
     header("Location: index.php"); // Redirigir al inicio de sesión después de cerrar la sesión
     exit();
 }
 
-// Procesar el formulario de modificación de documento
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["id"])) {
     
     // Obtener el ID del formulario
@@ -57,7 +54,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["id"])) {
         $cantidad = $_POST["cantidad"];
     }
 
-    // Construir la consulta SQL de actualización
     $sql = "UPDATE Documento SET 
             Tipo = NVL(:tipo, Tipo),
             Titulo = NVL(:titulo, Titulo),
@@ -69,10 +65,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["id"])) {
             Cantidad = NVL(:cantidad, Cantidad)
             WHERE Identificador = :id";
 
-    // Preparar la declaración
     $stmt = oci_parse($conn, $sql);
 
-    // Vincular parámetros
     oci_bind_by_name($stmt, ':id', $id);
     oci_bind_by_name($stmt, ':tipo', $tipo);
     oci_bind_by_name($stmt, ':titulo', $titulo);
@@ -83,11 +77,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["id"])) {
     oci_bind_by_name($stmt, ':categoria', $categoria);
     oci_bind_by_name($stmt, ':cantidad', $cantidad);
 
-    // Ejecutar la consulta
     if (oci_execute($stmt)) {
         // Éxito al modificar el documento
         echo "Documento modificado con éxito";
-        header("Location: indexbiblio.php?doc_modificado=true"); // Puedes redirigir a donde desees después de la modificación
+        header("Location: indexbiblio.php?doc_modificado=true"); 
         exit();
     } else {
         // Error al modificar el documento

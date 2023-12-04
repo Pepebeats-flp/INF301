@@ -28,7 +28,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
     <script src="https://kit.fontawesome.com/a4490af95b.js" crossorigin="anonymous"></script>
 </head>
 
-<!-- Body Responsivo para usuarios y bibliotecarios -->
 <body>
     <nav class="navbar navbar-light bg-light shadow-sm">
         <div class="container">
@@ -54,7 +53,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
             </span>
 
             <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-                <!-- Otro formulario u otros elementos según sea necesario -->
             </form>
 
         </div> 

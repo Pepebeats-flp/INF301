@@ -1,14 +1,12 @@
 <?php
 session_start();
 
-// Incluir la conexión a la base de datos
 require_once 'conexion.php';
 
 if (isset($_SESSION["usuario"])) {
     $usuario = $_SESSION["usuario"];
 }
 
-// Cerrar sesión
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
     session_destroy();
     header("Location: index.php"); 
@@ -123,8 +121,8 @@ echo '<div class="p-1 mb-3">';
 echo '<table class="table table-striped">';
 echo '<thead>';
 echo '<tr>';
-echo '<th scope="col">Préstamo</th>';
-echo '<th scope="col">Tipo de Préstamo</th>';
+echo '<th scope="col">Prestamo</th>';
+echo '<th scope="col">Tipo de Prestamo</th>';
 echo '<th scope="col">RUT</th>'; 
 echo '<th scope="col">Fecha Prestamo</th>';
 echo '<th scope="col">Fecha Devolucion</th>';
@@ -150,9 +148,7 @@ while ($fila = oci_fetch_assoc($stmtConsultaPrestamo)) {
             ? 'A tiempo'
             : 'Atrasado';
 
-        // Mostrar solo las filas donde el estado sea "Atrasado" y devueltoEl sea null
         if ($estado === 'Atrasado' && $fila['HORA_DEVOLUCION_REAL'] === null) {
-            // Obtén el RUT del usuario en base al IDUSUARIO
             $sqlObtenerRUT = "SELECT RUT FROM USUARIO WHERE IDENTIFICADOR = :idusuario";
             $stmtObtenerRUT = oci_parse($conn, $sqlObtenerRUT);
             oci_bind_by_name($stmtObtenerRUT, ':idusuario', $fila['IDUSUARIO']);
@@ -164,7 +160,6 @@ while ($fila = oci_fetch_assoc($stmtConsultaPrestamo)) {
                 break; 
             }
 
-            // Verifica si HORA_DEVOLUCION_REAL es NULL
             $devueltoEl = ($fila['HORA_DEVOLUCION_REAL'] === null) ? "No Devuelto" : $fila['HORA_DEVOLUCION_REAL'];
 
             // Convierte las fechas a objetos DateTime
@@ -175,7 +170,7 @@ while ($fila = oci_fetch_assoc($stmtConsultaPrestamo)) {
 
             // Verifica si las fechas se pudieron convertir correctamente
             if ($fechaDevolucion && ($fechaDevolucionReal || $fechaDevolucionReal === null)) {
-                // Calcula la diferencia en días solo si FECHA_DEVOLUCION_REAL no es null
+
                 $diferenciaDias = $fechaDevolucionReal !== null ? $fechaDevolucionReal->diff($fechaDevolucion)->days : 0;
 
                 // Calcula la sanción en semanas solo si el estado no es 'A tiempo'
@@ -183,7 +178,6 @@ while ($fila = oci_fetch_assoc($stmtConsultaPrestamo)) {
                     ? floor($diferenciaDias / 7 + 1)
                     : 0;
 
-                // Construye la cadena de sanción
                 $sancion = ($devueltoEl === "No Devuelto" || $fila['FECHA_DEVOLUCION'] < $fila['FECHA_DEVOLUCION_REAL'])
                     ? '-' 
                     : ($sancionSemanas > 0 ? $sancionSemanas . ' semana(s)' : '');

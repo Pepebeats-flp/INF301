@@ -64,21 +64,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["agregar_al_carrito"]))
     $stmt = oci_parse($conn, $sql);
     oci_bind_by_name($stmt, ":documento_id", $documento_id);
 
-    // Verifica que la consulta se prepare correctamente
     if (!$stmt) {
-        $e = oci_error($conn); // Para errores de OCI, no usamos oci_error()!
+        $e = oci_error($conn); 
         trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
     }
 
     oci_execute($stmt);
-
-    // Obtener los detalles del documento
     $documento = oci_fetch_assoc($stmt);
-
-    // Añadir el documento al carrito en la sesión
     $_SESSION['carrito'][] = $documento;
 
-    // Redirigir a la página del carrito
     header("Location: carro.php");
     exit();
 }
@@ -102,7 +96,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["agregar_al_carrito"]))
                 <i class="fa-solid fa-user"></i> 
                 <?php 
                     
-                    // Mostrar $correo solo si está definido
                     if (isset($correo)) {
                         echo "Usuario(a): ", $correo;
                 ?>
@@ -114,7 +107,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["agregar_al_carrito"]))
                 <?php 
 
                     } else {
-                        // Mostrar el botón "Iniciar Sesión" si el usuario no está autenticado
                         
                         echo '<a href="login.php" class="btn btn-outline-dark" style="margin-left: 10px;">Iniciar Sesión</a>';
                         echo '<a href="register.php" class="btn btn-outline-dark" style="margin-left: 10px;">Registrarse</a>';
@@ -139,7 +131,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["agregar_al_carrito"]))
             </span>
         </div> 
     </nav>
-    <!-- ... (código del encabezado) ... -->
 
     <div class="container shadow-sm rounded p-2 mt-2">
         <h2>Documentos encontrados:</h2>
@@ -175,7 +166,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["agregar_al_carrito"]))
                         echo "<td>{$fila['ANIO']}</td>";
                         echo "<td>{$fila['TIPO']}</td>";
                         echo "<td>{$fila['CATEGORIA']}</td>";
-                        echo "<td>{$fila['CANTIDAD']}</td>"; // Agregar el ID del documento
+                        echo "<td>{$fila['CANTIDAD']}</td>"; 
                         echo "<td><button type='submit' class='btn btn-dark' name='agregar_al_carrito' value='{$fila['IDENTIFICADOR']}'>Agregar a Carrito</button></td>";
                         echo "</tr>";
                     }

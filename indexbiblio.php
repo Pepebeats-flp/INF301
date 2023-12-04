@@ -1,14 +1,12 @@
 <?php
 session_start();
 
-// Incluir la conexión a la base de datos
 require_once 'conexion.php';
 
 if (isset($_SESSION["usuario"])) {
     $usuario = $_SESSION["usuario"];
 }
 
-// Cerrar sesión
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
     session_destroy();
     header("Location: index.php"); // Redirigir al inicio de sesión después de cerrar la sesión
@@ -53,7 +51,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
         </span>
 
         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-            <!-- Otro formulario u otros elementos según sea necesario -->
         </form>
 
         <ul class="nav">
@@ -86,7 +83,6 @@ if (isset($_GET["doc_eliminado"]) && $_GET["doc_eliminado"] == "true") {
         </div>';
 }
 
-// Verificar si se ha creado un documento
 if (isset($_GET["documento_creado"]) && $_GET["documento_creado"] == "true") {
     echo '<div class="alert alert-success mt-3 m-5 text-center" role="alert">
             El documento ha sido creado con exito.
@@ -146,7 +142,6 @@ if (isset($_GET["documento_creado"]) && $_GET["documento_creado"] == "true") {
     </div>
 
     <?php
-    // Realizar la consulta a la base de datos
     $sql = "SELECT * FROM Documento";
     $resultado = oci_parse($conn, $sql);
     oci_execute($resultado);
@@ -204,7 +199,6 @@ if (isset($_GET["documento_creado"]) && $_GET["documento_creado"] == "true") {
                     }
                     ?>
 
-                    <!-- Agrega este bloque de script al final de tu página o en la sección head -->
                     <script>
                         function confirmarEliminar() {
                             return confirm("¿Estás seguro de que quieres eliminar este documento?");

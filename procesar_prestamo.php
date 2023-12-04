@@ -1,9 +1,7 @@
 <?php
 require "conexion.php";
 
-// Verifica si se envió el formulario
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["idsolicitud"])) {
-    // Obtén el ID de la solicitud desde el formulario
     $idSolicitud = $_POST["idsolicitud"];
 
     // Realiza la consulta para obtener el IDUSUARIO desde SOLICITUD_PRESTAMO
@@ -50,14 +48,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["idsolicitud"])) {
             oci_execute($stmtUpdateCantidad);
         }
 
-        // Continuación de tu código...
 
         $sqlDeleteDetalles = "DELETE FROM DETALLE_SOLICITUD_PRESTAMO WHERE IDSOLICITUD = :idsolicitud";
         $stmtDeleteDetalles = oci_parse($conn, $sqlDeleteDetalles);
         oci_bind_by_name($stmtDeleteDetalles, ':idsolicitud', $idSolicitud);
         oci_execute($stmtDeleteDetalles);
 
-        // Elimina la solicitud de las tablas SOLICITUD_PRESTAMO y DETALLE_SOLICITUD_PRESTAMO
         $sqlDeleteSolicitud = "DELETE FROM SOLICITUD_PRESTAMO WHERE IDSOLICITUD = :idsolicitud";
         $stmtDeleteSolicitud = oci_parse($conn, $sqlDeleteSolicitud);
         oci_bind_by_name($stmtDeleteSolicitud, ':idsolicitud', $idSolicitud);

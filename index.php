@@ -17,9 +17,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
 
 // Procesar la solicitud de agregar al carrito
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["agregar_al_carrito"])) {
+
     if (isset($_POST['documentos_seleccionados']) && is_array($_POST['documentos_seleccionados'])) {
+
         foreach ($_POST['documentos_seleccionados'] as $documento_id) {
-            // Obtener información del documento desde la base de datos
+
             $sql = "SELECT * FROM Documento WHERE IDENTIFICADOR = :documento_id";
             $stmt = oci_parse($conn, $sql);
             oci_bind_by_name($stmt, ":documento_id", $documento_id);
@@ -30,9 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["agregar_al_carrito"]))
             $_SESSION["carrito"][] = $documento;
         }
 
-        // Opcional: Mostrar un mensaje de éxito o redirigir a la página del carrito
         $_SESSION['success_message'] = "Documentos agregados al carrito exitosamente.";
-        // Puedes redirigir a la página del carrito si lo deseas
         header("Location: carro.php");
         exit();
     }
@@ -58,7 +58,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["agregar_al_carrito"]))
                 <i class="fa-solid fa-user"></i> 
                 <?php 
                     
-                    // Mostrar $correo solo si está definido
                     if (isset($correo)) {
                         echo "Usuario(a): ", $correo;
                 ?>
@@ -69,9 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["agregar_al_carrito"]))
 
                 <?php 
 
-                    } else {
-                        // Mostrar el botón "Iniciar Sesión" si el usuario no está autenticado
-                        
+                    } else {                        
                         echo '<a href="login.php" class="btn btn-outline-dark" style="margin-left: 10px;">Iniciar Sesión</a>';
                         echo '<a href="register.php" class="btn btn-outline-dark" style="margin-left: 10px;">Registrarse</a>';
                         echo '<div class="alert alert-danger shadow-sm rounded p-2 mt-2" role="alert" style="font-size: 16px;">
@@ -97,7 +94,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["agregar_al_carrito"]))
     </nav>
 
     <?php
-    // Verificar si hay un mensaje de éxito y mostrarlo
     if (isset($_SESSION['success_message'])) {
         echo '<div class="alert alert-success mt-3 m-5 text-center" role="alert">
             La solicitud ha sido registrada con exito.

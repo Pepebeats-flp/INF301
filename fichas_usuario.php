@@ -101,7 +101,6 @@ if (isset($_GET["ficha_creada"]) && $_GET["ficha_creada"] == "true") {
 
 
 <?php
-    // Incluir la conexión a la base de datos
     require_once 'conexion.php';
 
     // Realizar la consulta a la base de datos
@@ -109,12 +108,9 @@ if (isset($_GET["ficha_creada"]) && $_GET["ficha_creada"] == "true") {
     $stmt = oci_parse($conn, $sql);
     oci_execute($stmt);
 
-    // Comienzo del contenedor
     echo '<div class="container shadow-sm rounded p-2 mt-2">';
 
-    // Verificar si la consulta fue exitosa
     if ($stmt) {
-        // Iterar sobre los resultados
         while ($fila = oci_fetch_assoc($stmt)) {
             // Extraer datos del array asociativo
             $rut = $fila['RUT'];
@@ -124,7 +120,6 @@ if (isset($_GET["ficha_creada"]) && $_GET["ficha_creada"] == "true") {
             $telefono = $fila['TELEFONO_ACTIVO'];
             $identificador = $fila['IDENTIFICADOR'];
         
-            // Mostrar la tarjeta con los datos
             echo '<div class="card" style="width: 100%;">
                     <h5 class="card-header">Ficha personal</h5>
                     <div class="card-body">

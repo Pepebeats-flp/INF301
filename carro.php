@@ -7,9 +7,7 @@ require_once 'conexion.php';
 if (isset($_SESSION["correo"])) {
     $correo = $_SESSION["correo"];
 } else {
-    // La sesión no está iniciada, redirigir a la página de inicio de sesión
     header("Location: login.php");
-    // Terminar el script para evitar que se ejecute más código
     exit();
 }
 
@@ -24,7 +22,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
 if (isset($_SESSION["carrito"]) && is_array($_SESSION["carrito"])) {
     $carrito = $_SESSION["carrito"];
 } else {
-    // Si el carrito no está definido o es null, muestra un mensaje indicando que está vacío
     echo "El carrito está vacío.";
 }
 
@@ -44,8 +41,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["eliminar_item"])) {
     $_SESSION["carrito"] = $carrito;
 }
 
-// Procesar la solicitud de enviar la solicitud
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["enviar_solicitud"])) {
+
     // Obtener el id del usuario desde la base de datos
     $correoUsuario = $_SESSION['correo'];
     $sqlIdUsuario = "SELECT u.IDENTIFICADOR FROM Usuario u JOIN cuentas_Usuario cu ON u.rut = cu.rut WHERE cu.correo = :correo";
@@ -68,14 +65,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["enviar_solicitud"])) {
         oci_bind_by_name($stmtInsertSolicitud, ":hora_Solicitud", $horaSolicitud);
         oci_bind_by_name($stmtInsertSolicitud, ":idSolicitud", $idSolicitud, 10); // El tercer parámetro es la longitud máxima del campo
 
-        // Ejecutar la inserción
         oci_execute($stmtInsertSolicitud);
 
-        // Obtener el idSolicitud generado por la inserción
         $idSolicitud = $idSolicitud ?? null; // Si no se asigna, establecerlo en null
 
         // Insertar en la tabla DetalleSolicitudPrestamo
         foreach ($carrito as $item) {
+
             // Obtener idEjemplar de la tabla Ejemplar usando el IDENTIFICADOR del carrito
             $idDocumento = $item['IDENTIFICADOR'];
             $sqlObtenerIdEjemplar = "SELECT idEjemplar FROM Ejemplar WHERE idDocumento = :idDocumento AND Estado = 'Bueno'";
@@ -84,7 +80,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["enviar_solicitud"])) {
             oci_execute($stmtObtenerIdEjemplar);
             $idEjemplar = oci_fetch_assoc($stmtObtenerIdEjemplar)['IDEJEMPLAR'];
 
-            // Liberar recursos de la consulta de idEjemplar
             oci_free_statement($stmtObtenerIdEjemplar);
 
             // Insertar en la tabla DetalleSolicitudPrestamo
@@ -101,11 +96,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["enviar_solicitud"])) {
                 echo "Error en la inserción de DetalleSolicitudPrestamo: " . $errorDetalle['message'];
             }
 
-            // Liberar recursos de la consulta de detalle
             oci_free_statement($stmtInsertDetalle);
         }
 
-        // Limpia los recursos de la consulta
         oci_free_statement($stmtIdUsuario);
         oci_free_statement($stmtInsertSolicitud);
 
@@ -113,7 +106,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["enviar_solicitud"])) {
         $_SESSION["carrito"] = array();
 
     } else {
-        // No se encontró el usuario, maneja la situación según tus necesidades
         echo "No se encontró el usuario.";
     }
 }
@@ -132,7 +124,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["enviar_solicitud"])) {
     <script src="https://kit.fontawesome.com/a4490af95b.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <!-- ... (código del encabezado) ... -->
 
     <div class="container shadow-sm rounded p-2 mt-5">
         <h2>Carro: </h2>

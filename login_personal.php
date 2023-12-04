@@ -1,21 +1,17 @@
 <?php
-// Incluir la conexión a la base de datos
 require_once 'conexion.php';
 
 session_start();
 
-// Verificar si el usuario ya está autenticado
 if (isset($_SESSION['usuario'])) {
     header("Location: index.php"); // Redirigir a la página de inicio
     exit();
 }
 
-// Verificar si se envió el formulario
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $usuario = $_POST["usuario"];
     $clave = $_POST["contrasena"];
 
-    // Consultar la base de datos para verificar las credenciales
     $consulta = "SELECT * FROM cuentas_personal WHERE usuario = :usuario AND contrasena = :contrasena";
     $stmt = oci_parse($conn, $consulta);
 

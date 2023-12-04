@@ -93,7 +93,6 @@ if (isset($_GET["dev_eliminada"]) && $_GET["dev_eliminada"] == "true") {
 
 require "conexion.php";
 
-// Realiza la consulta para obtener los datos de la tabla PRESTAMO
 $sqlConsultaPrestamo = "SELECT 
     P.IDPRESTAMO,
     P.TIPO_PRESTAMO,
@@ -182,9 +181,8 @@ while ($fila = oci_fetch_assoc($stmtConsultaPrestamo)) {
                 ? floor($diferenciaDias / 7 + 1)
                 : 0;
 
-            // Construye la cadena de sanción
             $sancion = ($devueltoEl === "No Devuelto" || $fila['FECHA_DEVOLUCION'] < $fila['FECHA_DEVOLUCION_REAL'])
-                ? '-' // No devuelto o devuelto a tiempo, no hay sanción
+                ? '-' 
                 : ($sancionSemanas > 0 ? $sancionSemanas . ' semana(s)' : '');
         } else {
             echo 'Error al convertir las fechas a objetos DateTime.';
@@ -232,9 +230,6 @@ echo '</div>';
 echo '</div>';
 
 ?>
-
-
-
 
 </body>
 </html>
