@@ -51,13 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["agregar_al_carrito"]))
     <script src="https://kit.fontawesome.com/a4490af95b.js" crossorigin="anonymous"></script>
 </head>
 <body>
-<?php
-    // Verificar si hay un mensaje de éxito y mostrarlo
-    if (isset($_SESSION['success_message'])) {
-        echo $_SESSION['success_message'];
-        unset($_SESSION['success_message']); // Limpiar el mensaje después de mostrarlo
-    }
-    ?>
+
     <nav class="navbar navbar-light bg-light shadow-sm">
         <div class="container">
             <span style="font-size: 20px;">
@@ -101,6 +95,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["agregar_al_carrito"]))
             </span>
         </div> 
     </nav>
+
+    <?php
+    // Verificar si hay un mensaje de éxito y mostrarlo
+    if (isset($_SESSION['success_message'])) {
+        echo '<div class="alert alert-success mt-3 m-5 text-center" role="alert">
+            La solicitud ha sido registrada con exito.
+        </div>';
+        unset($_SESSION['success_message']); // Limpiar el mensaje después de mostrarlo
+    }
+?>
 
     <div class="container shadow-sm rounded p-2 mt-2">
         <h2>Búsqueda de documentos:</h2>
