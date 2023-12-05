@@ -37,11 +37,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["idsolicitud"])) {
             $sqlInsertPrestamo = "INSERT INTO PRESTAMO (IDPRESTAMO, IDUSUARIO, TIPO_PRESTAMO, IDEJEMPLAR, FECHA_PRESTAMO, HORA_PRESTAMO, FECHA_DEVOLUCION, HORA_DEVOLUCION) 
                 VALUES (:idprestamo, :idusuario, 'Documento', :idejemplar, CURRENT_DATE, CURRENT_TIMESTAMP, CURRENT_DATE + INTERVAL '7' DAY, CURRENT_TIMESTAMP + INTERVAL '7' DAY)";
             $stmtInsertPrestamo = oci_parse($conn, $sqlInsertPrestamo);
-            
+
             oci_bind_by_name($stmtInsertPrestamo, ':idprestamo', $idPrestamoValue);
             oci_bind_by_name($stmtInsertPrestamo, ':idusuario', $idUsuario);
             oci_bind_by_name($stmtInsertPrestamo, ':idejemplar', $idejemplar);
             oci_execute($stmtInsertPrestamo);
+
+            // Disminuir en una unidad el valor de CANTIDAD en la tabla Documentos
+            $sqlUpdateCantidad = "UPDATE Documento SET CANTIDAD = CANTIDAD - 1 WHERE IDENTIFICADOR = (SELECT IDDOCUMENTO FROM Ejemplar WHERE IDEJEMPLAR = :idejemplar)";
+            $stmtUpdateCantidad = oci_parse($conn, $sqlUpdateCantidad);
+            oci_bind_by_name($stmtUpdateCantidad, ':idejemplar', $idejemplar);
+            oci_execute($stmtUpdateCantidad);
         }
 
         // Continuación de tu código...

@@ -205,11 +205,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["agregar_al_carrito"]))
                 </tbody>
             </table>
         </div>
-
-        <div style="text-align: right;">
-            <a href="index.php" class="btn btn-outline-dark">Volver</a>
-            <button class="btn btn-dark">Agregar a Solicitud</button>
-        </div>
     </div>
 
     <?php

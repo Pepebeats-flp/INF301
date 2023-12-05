@@ -96,10 +96,10 @@ oci_execute($resultado);
 
         <ul class="nav">
         <li class="nav-item">
-            <a href="#" class="btn btn-dark me-4" aria-current="page">Consultar Catalogo</a>
+            <a href="indexadmin.php" class="btn btn-dark me-4" aria-current="page">Consultar Catalogo</a>
         </li>
         <li class="nav-item">
-            <a href="#" class="btn btn-dark me-4">Fichas Usuarios</a>
+            <a href="ficha_usuario.php" class="btn btn-dark me-4">Fichas Usuarios</a>
         </li>
         <li class="nav-item">
             <a href="prestamos_vencidos.php" class="btn btn-dark">Prestamos vencidos</a>
