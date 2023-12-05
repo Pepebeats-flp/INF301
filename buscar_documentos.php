@@ -2,6 +2,17 @@
 session_start();
 require_once 'conexion.php';
 
+if (isset($_SESSION["correo"])) {
+    $correo = $_SESSION["correo"];
+}
+
+// Cerrar sesión
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cerrar_sesion"])) {
+    session_destroy();
+    header("Location: index.php"); // Redirigir al inicio de sesión después de cerrar la sesión
+    exit();
+}
+
 if (!isset($_SESSION["carrito"]) || $_SESSION["carrito"] === null) {
     $_SESSION["carrito"] = array();
 }

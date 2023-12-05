@@ -146,7 +146,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["enviar_solicitud"])) {
                         <th scope="col">Año</th>
                         <th scope="col">Tipo</th>
                         <th scope="col">Categoría</th>
-                        <th scope="col">#</th>
+                        <th scope="col">Cantidad</th>
                     </tr>
                 </thead>
                 <tbody>
