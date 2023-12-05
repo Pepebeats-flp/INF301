@@ -16,19 +16,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $clave = $_POST["clave"];
 
     // Consultar la base de datos para verificar las credenciales
-    $consulta = "SELECT * FROM cuentas_usuario WHERE correo = :correo AND clave = :clave";
+    $consulta = "SELECT * FROM cuentas_usuario WHERE correo = :correo";
     $stmt = oci_parse($conn, $consulta);
 
     oci_bind_by_name($stmt, ':correo', $correo);
-    oci_bind_by_name($stmt, ':clave', $clave);
 
     oci_execute($stmt);
 
     if ($row = oci_fetch_assoc($stmt)) {
-        // Usuario autenticado, iniciar sesión
-        $_SESSION['correo'] = $correo;
-        header("Location: index.php"); // Redirigir a la página de inicio
-        exit();
+        // Verificar la contraseña utilizando password_verify
+        $claveAlmacenada = $row['CLAVE']; // Suponiendo que la columna se llama CLAVE
+
+        if (password_verify($clave, $claveAlmacenada)) {
+            // Usuario autenticado, iniciar sesión
+            $_SESSION['correo'] = $correo;
+            header("Location: index.php"); // Redirigir a la página de inicio
+            exit();
+        } else {
+            $mensaje_error = "Credenciales incorrectas";
+        }
     } else {
         $mensaje_error = "Credenciales incorrectas";
     }
