@@ -43,7 +43,7 @@ if (!empty($author)) {
 }
 
 if (!empty($topic)) {
-    $sql .= " AND TEMA LIKE '%$topic%'";
+    $sql .= " AND ANIO LIKE '%$topic%'";
 }
 
 if (!empty($search)) {

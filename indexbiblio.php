@@ -134,9 +134,9 @@ if (isset($_GET["documento_creado"]) && $_GET["documento_creado"] == "true") {
                 </div>
             </div>
             <div class="form-group row mb-3">
-                <label for="topic" class="col-sm-3 col-form-label">Tema: </label>
+                <label for="topic" class="col-sm-3 col-form-label">Año: </label>
                 <div class="col-sm-9">
-                    <input type="text" class="form form-control" id="topic" name="topic" placeholder="Ingresa el tema...">
+                    <input type="text" class="form form-control" id="topic" name="topic" placeholder="Ingresa el año...">
                 </div>
             </div>
             <div style="text-align: right;">

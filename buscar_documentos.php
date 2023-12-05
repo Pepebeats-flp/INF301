@@ -33,7 +33,7 @@ if (!empty($author)) {
 }
 
 if (!empty($topic)) {
-    $sql .= " AND TEMA LIKE '%$topic%'";
+    $sql .= " AND ANIO LIKE '%$topic%'";
 }
 
 if (!empty($search)) {
@@ -92,8 +92,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["agregar_al_carrito"]))
                 <?php 
                     
                     // Mostrar $correo solo si está definido
-                    if (isset($_SESSION["correo"])) {
-                        echo $_SESSION["correo"];
+                    if (isset($correo)) {
+                        echo "Usuario(a): ", $correo;
                 ?>
                         
                         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
@@ -104,13 +104,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["agregar_al_carrito"]))
 
                     } else {
                         // Mostrar el botón "Iniciar Sesión" si el usuario no está autenticado
-                        echo '<a href="login.php" class="btn btn-outline-dark">Iniciar Sesión</a>';
-                        echo '<a href="register.php" class="btn btn-outline-dark">Registrarse</a>';
+                        
+                        echo '<a href="login.php" class="btn btn-outline-dark" style="margin-left: 10px;">Iniciar Sesión</a>';
+                        echo '<a href="register.php" class="btn btn-outline-dark" style="margin-left: 10px;">Registrarse</a>';
+                        echo '<div class="alert alert-danger shadow-sm rounded p-2 mt-2" role="alert" style="font-size: 16px;">
+                        Debes iniciar sesión o registrarte para poder solicitar documentos
+                        </div>';
+                        
+                        
                         
                     }
                 
                 ?>
             </span>
+
             <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
                 
             </form>
@@ -132,7 +139,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["agregar_al_carrito"]))
             </div>
         </form>
         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-            <div class="p-1 mb-3" style="overflow: scroll; max-height:300px;">
+            <div class="p-1 mb-3">
                 <table class="table table-striped">
                     <thead>
                     <tr>
@@ -142,7 +149,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["agregar_al_carrito"]))
                         <th scope="col">Año</th>
                         <th scope="col">Tipo</th>
                         <th scope="col">Categoría</th>
-                        <th scope="col">#</th>
+                        <th scope="col">Cantidad</th>
                         <th scope="col">Agregar</th>
                     </tr>
                     </thead>
