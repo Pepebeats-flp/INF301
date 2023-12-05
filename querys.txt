@@ -1,0 +1,187 @@
+CREATE TABLE Documento (
+    Identificador NUMBER, 
+    Tipo VARCHAR2(50),
+    Titulo VARCHAR2(50),
+    Autor VARCHAR2(50),
+    Editorial VARCHAR2(50),
+    Anio NUMBER,
+    Edicion VARCHAR2(50),
+    Categoria VARCHAR2(50),
+    Cantidad NUMBER
+);
+
+CREATE TABLE Ejemplar (
+    IdEjemplar NUMBER PRIMARY KEY, 
+    IdDocumento NUMBER,
+    Estado VARCHAR2(50),
+    Ubicacion VARCHAR2(50),
+);
+
+CREATE TABLE Prestamo (
+    IdPrestamo NUMBER, 
+    Tipo_Prestamo VARCHAR2(50),
+    IdEjemplar NUMBER,
+    Fecha_Prestamo DATE,
+    Hora_Prestamo TIMESTAMP(0),
+    Fecha_Devolucion DATE,
+    Hora_Devolucion TIMESTAMP(0),
+    Fecha_Devolucion_Real DATE,
+    Hora_Devolucion_Real TIMESTAMP(0),
+    IdUsuario NUMBER,
+    FOREIGN KEY (IdEjemplar) REFERENCES Ejemplar(IdEjemplar)
+);
+
+CREATE TABLE Usuario (
+    Identificador NUMBER PRIMARY KEY, 
+    RUT VARCHAR2(9),
+    Nombres VARCHAR2(50),
+    Apellidos VARCHAR2(50),
+    Direccion VARCHAR2(50),
+    Telefono_Activo VARCHAR2(50)
+);
+
+CREATE TABLE Solicitud_Prestamo (
+    IdSolicitud NUMBER PRIMARY KEY, 
+    IdUsuario NUMBER,
+    Fecha_Solicitud DATE,
+    Hora_Solicitud TIMESTAMP(0),
+    FOREIGN KEY (IdUsuario) REFERENCES Usuario(Identificador)
+);
+
+CREATE TABLE Detalle_Solicitud_Prestamo (
+    IdSolicitud NUMBER PRIMARY KEY, 
+    IdEjemplar NUMBER,
+    FOREIGN KEY (IdSolicitud) REFERENCES Solicitud_Prestamo(IdSolicitud),
+    FOREIGN KEY (IdEjemplar) REFERENCES Ejemplar(IdEjemplar)
+);
+
+CREATE TABLE Cuentas_Usuario (
+    RUT VARCHAR2(9) PRIMARY KEY NOT NULL,
+    Correo VARCHAR2(100),
+    Clave VARCHAR2(255 BYTE)
+);
+
+CREATE TABLE cuentas_personal (
+    IdCuenta INT PRIMARY KEY,
+    usuario VARCHAR(255),
+    contrasena VARCHAR(255),
+    tipo_cuenta VARCHAR(255)
+);
+
+CREATE SEQUENCE seq_usuario
+   START WITH 1
+   INCREMENT BY 1
+   NOMAXVALUE
+   NOCYCLE
+   NOCACHE;
+
+ALTER TABLE Usuario
+MODIFY Identificador NUMBER DEFAULT seq_usuario.NEXTVAL NOT NULL;
+
+CREATE SEQUENCE seq_documento
+ START WITH 1
+ INCREMENT BY 1
+ NOMAXVALUE
+ NOCYCLE
+ NOCACHE;
+
+ALTER TABLE Documento
+MODIFY Identificador NUMBER DEFAULT seq_documento.NEXTVAL NOT NULL;
+
+CREATE SEQUENCE seq_solicitud
+   START WITH 1
+   INCREMENT BY 1
+   NOMAXVALUE
+   NOCYCLE
+   NOCACHE;
+
+ALTER TABLE SOLICITUD_PRESTAMO
+MODIFY IDSOLICITUD NUMBER DEFAULT seq_solicitud.NEXTVAL NOT NULL;
+
+CREATE SEQUENCE seq_personal
+   START WITH 1
+   INCREMENT BY 1
+   NOMAXVALUE
+   NOCYCLE
+   NOCACHE;
+
+ALTER TABLE cuentas_personal
+MODIFY IdCuenta NUMBER DEFAULT seq_personal.NEXTVAL NOT NULL;
+
+CREATE SEQUENCE seq_prestamo
+   START WITH 1
+   INCREMENT BY 1
+   NOMAXVALUE
+   NOCYCLE
+   NOCACHE;
+
+ALTER TABLE PRESTAMO
+MODIFY IDPRESTAMO NUMBER DEFAULT seq_prestamo.NEXTVAL NOT NULL;
+
+CREATE SEQUENCE seq_ejemplar
+   START WITH 1
+   INCREMENT BY 1
+   NOMAXVALUE
+   NOCYCLE
+   NOCACHE;
+
+ALTER TABLE EJEMPLAR
+MODIFY IDEJEMPLAR NUMBER DEFAULT seq_ejemplar.NEXTVAL NOT NULL;
+
+
+-- Ejemplo 1
+INSERT INTO Documento (Identificador, Tipo, Titulo, Autor, Editorial, Anio, Edicion, Categoria, Cantidad)
+VALUES (1, 'Libro', 'Introduccion a la Programacion', 'John Doe', 'Editorial ABC', 2020, 'Primera Edicion', 'Tecnologia', 3);
+
+-- Ejemplo 2
+INSERT INTO Documento (Identificador, Tipo, Titulo, Autor, Editorial, Anio, Edicion, Categoria, Cantidad)
+VALUES (2, 'Revista', 'Ciencia y Tecnologia', 'Jane Smith', 'Editorial XYZ', 2021, 'Vol. 5, No. 2', 'Ciencia', 5);
+
+-- Ejemplo 3
+INSERT INTO Documento (Identificador, Tipo, Titulo, Autor, Editorial, Anio, Edicion, Categoria, Cantidad)
+VALUES (3, 'Articulo', 'Machine Learning Avanzado', 'Alice Johnson', 'Editorial 123', 2019, 'Especial', 'Arte', 10);
+
+-- Ejemplo 4
+INSERT INTO Documento (Identificador, Tipo, Titulo, Autor, Editorial, Anio, Edicion, Categoria, Cantidad)
+VALUES (4, 'Libro', 'Algoritmos y Estructuras de Datos', 'Michael Brown', 'Editorial XYZ', 2018, 'Segunda Edicion', 'Tecnologia', 2);
+
+-- Ejemplo 5
+INSERT INTO Documento (Identificador, Tipo, Titulo, Autor, Editorial, Anio, Edicion, Categoria, Cantidad)
+VALUES (5, 'Revista', 'Historia del Arte Moderno', 'Emma Davis', 'Editorial 789', 2022, 'Vol. 3, No. 1', 'Arte', 4);
+
+-- Ejemplo 6
+INSERT INTO Documento (Identificador, Tipo, Titulo, Autor, Editorial, Anio, Edicion, Categoria, Cantidad)
+VALUES (6, 'Articulo', 'Avances en Inteligencia Artificial', 'Samuel Clark', 'Editorial ABC', 2020, 'Especial', 'Ciencia', 5);
+
+
+
+
+-- Ejemplos para IDDOCUMENTO = 1 (Introduccion a la Programacion)
+INSERT INTO Ejemplar (IDEJEMPLAR, IDDOCUMENTO, ESTADO, UBICACION)
+SELECT ROWNUM, 1, 'Bueno', CASE ROWNUM WHEN 1 THEN 'Pasillo A' WHEN 2 THEN 'Pasillo B' ELSE 'Pasillo C' END
+FROM dual CONNECT BY LEVEL <= 3;
+
+-- Ejemplos para IDDOCUMENTO = 2 (Ciencia y Tecnologia)
+INSERT INTO Ejemplar (IDEJEMPLAR, IDDOCUMENTO, ESTADO, UBICACION)
+SELECT ROWNUM + 3, 2, 'Bueno', CASE ROWNUM WHEN 1 THEN 'Pasillo A' WHEN 2 THEN 'Pasillo B' ELSE 'Pasillo C' END
+FROM dual CONNECT BY LEVEL <= 5;
+
+-- Ejemplos para IDDOCUMENTO = 3 (Machine Learning Avanzado)
+INSERT INTO Ejemplar (IDEJEMPLAR, IDDOCUMENTO, ESTADO, UBICACION)
+SELECT ROWNUM + 8, 3, 'Bueno', CASE ROWNUM WHEN 1 THEN 'Pasillo A' WHEN 2 THEN 'Pasillo B' ELSE 'Pasillo C' END
+FROM dual CONNECT BY LEVEL <= 10;
+
+-- Ejemplos para IDDOCUMENTO = 4 (Algoritmos y Estructuras de Datos)
+INSERT INTO Ejemplar (IDEJEMPLAR, IDDOCUMENTO, ESTADO, UBICACION)
+SELECT ROWNUM + 18, 4, 'Bueno', CASE ROWNUM WHEN 1 THEN 'Pasillo A' ELSE 'Pasillo B' END
+FROM dual CONNECT BY LEVEL <= 2;
+
+-- Ejemplos para IDDOCUMENTO = 5 (Historia del Arte Moderno)
+INSERT INTO Ejemplar (IDEJEMPLAR, IDDOCUMENTO, ESTADO, UBICACION)
+SELECT ROWNUM + 20, 5, 'Bueno', CASE ROWNUM WHEN 1 THEN 'Pasillo C' WHEN 2 THEN 'Pasillo A' ELSE 'Pasillo B' END
+FROM dual CONNECT BY LEVEL <= 4;
+
+-- Ejemplos para IDDOCUMENTO = 6 (Avances en Inteligencia Artificial)
+INSERT INTO Ejemplar (IDEJEMPLAR, IDDOCUMENTO, ESTADO, UBICACION)
+SELECT ROWNUM + 24, 6, 'Bueno', CASE ROWNUM WHEN 1 THEN 'Pasillo A' WHEN 2 THEN 'Pasillo B' ELSE 'Pasillo C' END
+FROM dual CONNECT BY LEVEL <= 5;
